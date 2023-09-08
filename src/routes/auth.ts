@@ -74,7 +74,7 @@ auth.post(
                 return { accessToken: token, refreshToken: refreshToken };
             })
             .then(({ status, data }) => {
-                res.status(status).send(data);
+                res.status(status).send(data.userDetails);
             })
             .catch((err) => {
                 logger.error(`Signup: ${err.stacktrace}`);
