@@ -1,8 +1,7 @@
-import { compareSync, genSaltSync, hashSync } from "bcrypt";
+import { compare, genSalt, hash } from "bcrypt";
 import { NewUser, getUser, insertUser } from "../db/schema/users";
 import { logger } from "../logging";
 import { UserInfo, UserServiceReturn } from "../types";
-import crypto from "crypto";
 import { ROUNDS } from "../constants";
 import { prettyPrint } from "..";
 
@@ -26,7 +25,7 @@ class UserService {
             logger.info(`User: ${email} found`);
 
             const { passhash, userId } = users[0];
-            const compareResult = compareSync(password, passhash);
+            const compareResult = await compare(password, passhash);
             if (compareResult) {
                 const { accessToken, refreshToken } = generateTokens(userId);
 
@@ -61,11 +60,11 @@ class UserService {
                 };
             }
 
-            const salt = genSaltSync(ROUNDS);
+            const salt = await genSalt(ROUNDS);
             const user: NewUser = {
                 email: email,
                 salt: salt,
-                passhash: hashSync(password, salt),
+                passhash: await hash(password, salt),
             };
 
             try {
