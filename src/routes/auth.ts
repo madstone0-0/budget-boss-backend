@@ -8,6 +8,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { prettyPrint } from "../index.ts";
 import UserService from "../services/UserService.ts";
 import { UserInfo } from "../types.ts";
+import handleValidation from "../middleware/handleValidation.ts";
 
 const auth = express.Router();
 
@@ -18,11 +19,8 @@ auth.get("/info", (req, res) => {
 auth.post(
     "/signup",
     validateUserInfo(),
+    handleValidation,
     (req: Request, res: Response, next: NextFunction) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).send({ msg: errors.array() });
-        }
         const { email, password } = req.body;
         const userInfo: UserInfo = {
             email: email,
@@ -45,11 +43,8 @@ auth.post(
 auth.post(
     "/login",
     validateUserInfo(),
+    handleValidation,
     (req: Request, res: Response, next: NextFunction) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).send({ msg: errors.array() });
-        }
         const { email, password } = req.body;
         const userInfo: UserInfo = {
             email: email,
@@ -77,7 +72,7 @@ auth.post(
                 res.status(status).send(data.userDetails);
             })
             .catch((err) => {
-                logger.error(`Signup: ${err.stacktrace}`);
+                logger.error(`Login: ${err.stacktrace}`);
                 res.status(500).send({ msg: "Server Error" });
             });
     },
