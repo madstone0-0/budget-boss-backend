@@ -25,16 +25,19 @@ const userSelectByEmail = db
     .limit(1)
     .prepare("user_select_by_email");
 
+const userDeleteById = db
+    .delete(users)
+    .where(eq(users.userId, sql.placeholder("id")))
+    .prepare("user_delete_by_id");
+
 export const getUser = async (email: string) =>
-    // await db.select().from(users).where(eq(users.email, email)).limit(1);
     await userSelectByEmail.execute({ email: email });
 
 export const getUserById = async (id: string) =>
-    // await db.select().from(users).where(eq(users.userId, id)).limit(1);
     await userSelectById.execute({ id: id });
 
 export const insertUser = async (user: NewUser) =>
     db.insert(users).values(user).returning();
 
 export const deleteUser = async (id: string) =>
-    await db.delete(users).where(eq(users.userId, id));
+    await userDeleteById.execute({ id });

@@ -1,7 +1,7 @@
 import { compare, genSalt, hash } from "bcrypt";
 import { NewUser, getUser, insertUser } from "../db/schema/users";
 import { logger } from "../logging";
-import { UserInfo, UserServiceReturn } from "../types";
+import { UserInfo, ServiceReturn } from "../types";
 import { ROUNDS } from "../constants";
 import { prettyPrint } from "..";
 
@@ -12,7 +12,7 @@ class UserService {
             accessToken: string;
             refreshToken: string;
         },
-    ): Promise<UserServiceReturn> {
+    ): Promise<ServiceReturn> {
         const { email, password } = userInfo;
         try {
             const users = await getUser(email);
@@ -47,7 +47,7 @@ class UserService {
         }
     }
 
-    async SignUp(userInfo: UserInfo): Promise<UserServiceReturn> {
+    async SignUp(userInfo: UserInfo): Promise<ServiceReturn> {
         const { email, password } = userInfo;
         try {
             const users = await getUser(email);

@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as constants from "../constants.ts";
+import * as constants from "../constants";
 
 const pool = new Pool({
     host: constants.PG_HOST,

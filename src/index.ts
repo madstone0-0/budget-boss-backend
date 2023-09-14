@@ -6,7 +6,8 @@ import compression from "compression";
 
 import { httpLogger } from "./logging";
 import { HOST, PORT } from "./constants";
-import auth from "./routes/auth.ts";
+import auth from "./routes/auth";
+import bud from "./routes/budget";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,16 @@ app.get("/info", (_req, res, _next) => {
 
 app.use("/auth", auth);
 
-app.listen(PORT, HOST, () => {
-    console.log(`Listening on http://${HOST}:${PORT}`);
-});
+app.use("/budget", bud);
+
+
+export default app;
+
+if (process.env.NODE_ENV !== "testing") {
+    (() => {
+        app.listen(PORT, HOST, () => {
+            console.log(`Mode: ${process.env.NODE_ENV}`);
+            console.log(`Listening on http://${HOST}:${PORT}`);
+        });
+    })();
+}

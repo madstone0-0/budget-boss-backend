@@ -1,10 +1,12 @@
 export interface UserInfo {
+    userId?: string;
     email: string;
     password: string;
+    accessToken?: string;
+    refreshToken?: string;
 }
 
-export interface UserServiceReturn {
+export interface ServiceReturn {
     status: number;
     data: any;
-    request?: any | null;
 }
