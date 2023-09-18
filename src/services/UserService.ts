@@ -1,5 +1,5 @@
 import { compare, genSalt, hash } from "bcrypt";
-import { NewUser, getUser, insertUser } from "../db/schema/users";
+import { NewUser, getUser, insertUser, updateUser } from "../db/schema/users";
 import { logger } from "../logging";
 import { UserInfo, ServiceReturn } from "../types";
 import { ROUNDS } from "../constants";
@@ -24,7 +24,7 @@ class UserService {
 
             logger.info(`User: ${email} found`);
 
-            const { passhash, userId } = users[0];
+            const { passhash, userId, hasCreatedBudget } = users[0];
             const compareResult = await compare(password, passhash);
             if (compareResult) {
                 const { accessToken, refreshToken } = generateTokens(userId);
@@ -32,6 +32,7 @@ class UserService {
                 const userDetails = {
                     id: userId,
                     email: email,
+                    hasCreatedBudget: hasCreatedBudget,
                     accessToken: accessToken,
                     refreshToken: refreshToken,
                 };
@@ -81,6 +82,25 @@ class UserService {
             }
         } catch (err: any) {
             logger.info(`/auth/signup Error: ${err}`);
+            return { status: 500, data: { msg: err.message } };
+        }
+    }
+
+    async Update(user: UserInfo): Promise<ServiceReturn> {
+        const { hasCreatedBudget, userId } = user;
+        try {
+            const result = await updateUser(userId!, {
+                hasCreatedBudget: hasCreatedBudget!,
+            });
+
+            logger.info(`User: ${userId} successfully updated`);
+            logger.info(prettyPrint(result));
+            return {
+                status: 200,
+                data: { msg: "User updated successfully" },
+            };
+        } catch (err: any) {
+            logger.info(`/auth/update Error: ${err}`);
             return { status: 500, data: { msg: err.message } };
         }
     }

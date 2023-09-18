@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, boolean } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, eq, sql } from "drizzle-orm";
 import db from "../../db";
 
@@ -7,6 +7,7 @@ export const users = pgTable("users", {
     email: varchar("email").notNull(),
     salt: varchar("salt").notNull(),
     passhash: varchar("passhash").notNull(),
+    hasCreatedBudget: boolean("has_created_budget").notNull().default(false),
 });
 
 export type User = InferSelectModel<typeof users>;
@@ -41,3 +42,6 @@ export const insertUser = async (user: NewUser) =>
 
 export const deleteUser = async (id: string) =>
     await userDeleteById.execute({ id });
+
+export const updateUser = async (id: string, user: Partial<User>) =>
+    db.update(users).set(user).where(eq(users.userId, id)).returning();

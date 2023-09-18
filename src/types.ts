@@ -2,6 +2,7 @@ export interface UserInfo {
     userId?: string;
     email: string;
     password: string;
+    hasCreatedBudget?: boolean;
     accessToken?: string;
     refreshToken?: string;
 }

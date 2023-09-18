@@ -8,7 +8,7 @@ const validateJWT: Handler = (req, res, next) => {
     if (!refreshToken || !accessToken) {
         logger.error("No access token found in request");
         return res
-            .status(401)
+            .status(417)
             .send({ msg: "No access token found in request" });
     }
 
@@ -16,8 +16,8 @@ const validateJWT: Handler = (req, res, next) => {
         verify(accessToken, process.env.SECRET_KEY!);
         next();
     } catch (err: any) {
-        logger.error(`Validate JWT: ${err.stacktrace}`);
-        return res.status(401).send({ msg: err.stacktrace });
+        logger.error(`Validate JWT: ${err}`);
+        return res.status(401).send({ msg: err });
     }
 };
 

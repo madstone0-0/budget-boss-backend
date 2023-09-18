@@ -61,7 +61,7 @@ auth.post("/login", (req: Request, res: Response, next: NextFunction) => {
             return { accessToken: token, refreshToken: refreshToken };
         })
         .then(({ status, data }) => {
-            res.status(status).send(data.userDetails);
+            res.status(status).send(data);
         })
         .catch((err) => {
             logger.error(`Login: ${err.stacktrace}`);
