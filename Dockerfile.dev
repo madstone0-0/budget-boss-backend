@@ -1,6 +1,6 @@
 FROM node:20.6-alpine3.17
 
-ENV MODE DEV
+ENV NODE_ENV development
 
 WORKDIR /usr/server
 

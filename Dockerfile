@@ -1,6 +1,6 @@
 FROM node:20.6-alpine3.17
 
-ENV MODE PRODUCTION
+ENV NODE_ENV production
 
 WORKDIR /usr/server
 
@@ -13,7 +13,7 @@ RUN yarn build
 
 FROM node:20.6-alpine3.17
 
-ENV MODE PRODUCTION
+ENV NODE_ENV production
 
 WORKDIR /usr/server
 COPY package*.json ./
