@@ -12,12 +12,24 @@ import handleValidation from "../middleware/handleValidation";
 const auth = express.Router();
 
 auth.get("/info", (req, res) => {
+    //#summary = 'Auth info'
+    /*
+    #swagger.tags = ['Auth']
+    #swagger.responses[500] = { description: 'Server Error'}
+    */
+
     res.send("Auth route");
 });
 
 auth.use(validateUserInfo(), handleValidation);
 
 auth.post("/signup", (req: Request, res: Response, next: NextFunction) => {
+    /*
+    #swagger.summary = 'Sign up'
+     #swagger.parameters['userInfo'] = { in: 'body', description: 'User info', required: true, schema: { $ref: "#/definitions/UserInfo" } }
+    #swagger.responses[200] = { description: 'User successfully signed up' }
+    #swagger.responses[400] = { description: 'Email is already registered'}
+    */
     const { email, password } = req.body;
     const userInfo: UserInfo = {
         email: email,
@@ -37,6 +49,12 @@ auth.post("/signup", (req: Request, res: Response, next: NextFunction) => {
 });
 
 auth.post("/login", (req: Request, res: Response, next: NextFunction) => {
+    /*
+    #swagger.summary = 'Login'
+    #swagger.parameters['userInfo'] = { in: 'body', description: 'User info', required: true, schema: { $ref: "#/definitions/UserInfo" } }
+    #swagger.responses[200] = { description: 'User successfully logged in',  schema: { $userDetails: { $ref: "#/definitions/UserInfo" } } }
+    #swagger.responses[401] = { description: 'Incorrect Password'}
+    */
     const { email, password } = req.body;
     const userInfo: UserInfo = {
         email: email,

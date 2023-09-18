@@ -10,6 +10,9 @@ import validateRequiredFields from "../middleware/validateRequiredFields";
 const bud = express.Router();
 
 bud.get("/info", (req, res) => {
+    /*
+    #swagger.summary = 'Budget info'
+    */
     res.send("Budget route");
 });
 
@@ -19,6 +22,11 @@ bud.get(
     "/all/:id",
     // validateRequiredFields({ requiredFieldsParam: ["id"] }),
     (req, res) => {
+        /*
+        #swagger.summary = 'Get all budgets'
+        #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
+        #swagger.responses[200] = { description: 'Budgets successfully retrieved', schema: { $budgets: { $ref: "#/definitions/Budget"} } }
+        */
         const { id } = req.params;
         if (!id) {
             res.status(400).send("Missing required fields");
@@ -37,6 +45,12 @@ bud.get(
 );
 
 bud.post("/add/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Add budget'
+    #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
+    #swagger.parameters['budget'] = { in: 'body', description: 'Budget info', required: true, schema: { $ref: "#/definitions/NewBudget" } }
+    #swagger.responses[200] = { description: 'Budget successfully added' }
+    */
     const { id } = req.params;
     const { name, amount, dateAdded, categoryId } = req.body;
 
@@ -64,6 +78,12 @@ bud.post("/add/:id", (req, res) => {
 });
 
 bud.put("/update/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Update budget'
+    #swagger.parameters['id'] = { in: 'path', description: 'Budget id', required: true, type: 'string' }
+    #swagger.parameters['budget'] = { in: 'body', description: 'Budget info', required: true, schema: { $ref: "#/definitions/Budget" } }
+    #swagger.responses[200] = { description: 'Budget successfully updated' }
+    */
     const { id } = req.params;
     const { name, amount, dateAdded, categoryId } = req.body;
 
@@ -91,6 +111,11 @@ bud.put("/update/:id", (req, res) => {
 });
 
 bud.delete("/delete/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Delete budget'
+    #swagger.parameters['id'] = { in: 'path', description: 'Budget id', required: true, type: 'string' }
+    #swagger.responses[200] = { description: 'Budget successfully deleted' }
+    */
     const { id } = req.params;
 
     new BudgetService()
@@ -107,6 +132,12 @@ bud.delete("/delete/:id", (req, res) => {
 // Budget Options
 
 bud.post(
+    /*
+    #swagger.summary = 'Create budget options'
+    #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
+    #swagger.parameters['budgetOptions'] = { in: 'body', description: 'Budget options', required: true, schema: { $ref: "#/definitions/BudgetOptions" } }
+    #swagger.responses[200] = { description: 'Budget options successfully created' }
+    */
     "/options/create/:id",
     // validateRequiredFields({ requiredFieldsBody: ["budgetOptions"] }),
     (req: Request, res: Response, next: NextFunction) => {
@@ -135,6 +166,11 @@ bud.post(
 );
 
 bud.get("/options/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Get budget options'
+    #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
+    #swagger.responses[200] = { description: 'Budget options successfully retrieved', schema: { $ref: "#/definitions/BudgetOptions" }}
+    */
     const { id } = req.params;
 
     if (!id) {
@@ -153,6 +189,12 @@ bud.get("/options/:id", (req, res) => {
 });
 
 bud.put("/options/update/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Update budget options'
+    #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
+    #swagger.parameters['budgetOptions'] = { in: 'body', description: 'Budget options', required: true, schema: { $ref: "#/definitions/BudgetOptions" } }
+    #swagger.responses[200] = { description: 'Budget options successfully updated' }
+    */
     const { id } = req.params;
     const { budgetOptions } = req.body;
 
@@ -172,6 +214,11 @@ bud.put("/options/update/:id", (req, res) => {
 });
 
 bud.delete("/options/delete/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Delete budget options'
+    #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
+    #swagger.responses[200] = { description: 'Budget options successfully deleted' }
+    */
     const { id } = req.params;
 
     if (!id) {

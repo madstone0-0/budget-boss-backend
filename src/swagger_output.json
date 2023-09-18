@@ -1,0 +1,1091 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "INVEBB API",
+    "description": "INVEBB API Documentation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:10500",
+      "description": "Development server"
+    },
+    {
+      "url": "http://localhost:80",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/info": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/info": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sign up",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userInfo",
+            "in": "body",
+            "description": "User info",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UserInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully signed up"
+          },
+          "400": {
+            "description": "Email is already registered"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "description": "",
+        "parameters": [
+          {
+            "name": "userInfo",
+            "in": "body",
+            "description": "User info",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UserInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userDetails": {
+                      "$ref": "#/components/schemas/UserInfo"
+                    }
+                  },
+                  "required": [
+                    "userDetails"
+                  ],
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userDetails": {
+                      "$ref": "#/components/schemas/UserInfo"
+                    }
+                  },
+                  "required": [
+                    "userDetails"
+                  ],
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Incorrect Password"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshKey": {
+                    "example": "any"
+                  },
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/info": {
+      "get": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Budget info",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/all/{id}": {
+      "get": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Get all budgets",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budgets successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "budgets": {
+                      "$ref": "#/components/schemas/Budget"
+                    }
+                  },
+                  "required": [
+                    "budgets"
+                  ],
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "budgets": {
+                      "$ref": "#/components/schemas/Budget"
+                    }
+                  },
+                  "required": [
+                    "budgets"
+                  ],
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/budget/add/{id}": {
+      "post": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Add budget",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          },
+          {
+            "name": "budget",
+            "in": "body",
+            "description": "Budget info",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/NewBudget"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget successfully added"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "amount": {
+                    "example": "any"
+                  },
+                  "dateAdded": {
+                    "example": "any"
+                  },
+                  "categoryId": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/update/{id}": {
+      "put": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Update budget",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Budget id"
+          },
+          {
+            "name": "budget",
+            "in": "body",
+            "description": "Budget info",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Budget"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget successfully updated"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "amount": {
+                    "example": "any"
+                  },
+                  "dateAdded": {
+                    "example": "any"
+                  },
+                  "categoryId": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Delete budget",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Budget id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget successfully deleted"
+          },
+          "400": {
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/budget/options/create/{id}": {
+      "post": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Create budget options",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          },
+          {
+            "name": "budgetOptions",
+            "in": "body",
+            "description": "Budget options",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/BudgetOptions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget options successfully created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "budgetOptions": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/options/{id}": {
+      "get": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Get budget options",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget options successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetOptions"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetOptions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/budget/options/update/{id}": {
+      "put": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Update budget options",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          },
+          {
+            "name": "budgetOptions",
+            "in": "body",
+            "description": "Budget options",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/BudgetOptions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget options successfully updated"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "budgetOptions": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/options/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Delete budget options",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget options successfully deleted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/categories/info": {
+      "get": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Category info",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "No access token found in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserInfo": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "abc@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "xml": {
+          "name": "UserInfo"
+        }
+      },
+      "Budget": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "budget 1"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000"
+          },
+          "dateadded": {
+            "type": "string",
+            "example": "2021-01-01"
+          },
+          "categoryid": {
+            "type": "string",
+            "example": "uuid"
+          }
+        },
+        "xml": {
+          "name": "Budget"
+        }
+      },
+      "NewBudget": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "budget 1"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000"
+          },
+          "dateadded": {
+            "type": "string",
+            "example": "2021-01-01"
+          },
+          "categoryid": {
+            "type": "string",
+            "example": "uuid"
+          }
+        },
+        "xml": {
+          "name": "NewBudget"
+        }
+      },
+      "BudgetOptions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "uuid"
+          }
+        },
+        "xml": {
+          "name": "BudgetOptions"
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "example": "Error message"
+          }
+        },
+        "xml": {
+          "name": "ErrorResponse"
+        }
+      }
+    }
+  }
+}
