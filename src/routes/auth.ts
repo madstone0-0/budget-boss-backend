@@ -37,13 +37,12 @@ auth.post("/signup", (req: Request, res: Response, next: NextFunction) => {
     };
     logger.info(prettyPrint(userInfo));
 
-    new UserService()
-        .SignUp(userInfo)
+    UserService.SignUp(userInfo)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
         .catch((err) => {
-            logger.error(`Signup: ${err.stacktrace}`);
+            logger.error(`Signup: ${err}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -61,28 +60,27 @@ auth.post("/login", (req: Request, res: Response, next: NextFunction) => {
         password: password,
     };
     logger.info(prettyPrint(userInfo));
-    new UserService()
-        .Login(userInfo, (userId) => {
-            const SECRET_KEY = process.env.SECRET_KEY!;
-            const refreshId = userId + SECRET_KEY;
-            const salt = crypto.randomBytes(16).toString("base64");
-            const hash = crypto
-                .createHmac("sha512", salt)
-                .update(refreshId)
-                .digest("base64");
-            req.body.refreshKey = salt;
-            const token = sign(req.body, SECRET_KEY, {
-                expiresIn: "3h",
-            });
-            const b = Buffer.from(hash);
-            const refreshToken = b.toString("base64");
-            return { accessToken: token, refreshToken: refreshToken };
-        })
+    UserService.Login(userInfo, (userId) => {
+        const SECRET_KEY = process.env.SECRET_KEY!;
+        const refreshId = userId + SECRET_KEY;
+        const salt = crypto.randomBytes(16).toString("base64");
+        const hash = crypto
+            .createHmac("sha512", salt)
+            .update(refreshId)
+            .digest("base64");
+        req.body.refreshKey = salt;
+        const token = sign(req.body, SECRET_KEY, {
+            expiresIn: "3h",
+        });
+        const b = Buffer.from(hash);
+        const refreshToken = b.toString("base64");
+        return { accessToken: token, refreshToken: refreshToken };
+    })
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
         .catch((err) => {
-            logger.error(`Login: ${err.stacktrace}`);
+            logger.error(`Login: ${err}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });

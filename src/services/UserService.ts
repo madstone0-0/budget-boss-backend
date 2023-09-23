@@ -4,6 +4,11 @@ import { logger } from "../logging";
 import { UserInfo, ServiceReturn } from "../types";
 import { ROUNDS } from "../constants";
 import { prettyPrint } from "..";
+import {
+    STARTING_CATEGORIES,
+    categories,
+    insertCategory,
+} from "../db/schema/categories";
 
 class UserService {
     async Login(
@@ -70,9 +75,24 @@ class UserService {
 
             try {
                 const result = await insertUser(user);
+                const { userId } = result[0];
 
                 logger.info(`User: ${email} successfully registered`);
                 logger.info(prettyPrint(result));
+
+                logger.info(`Creating starting categories for user ${email}`);
+                const startingCategories = STARTING_CATEGORIES.map(
+                    (category) => ({ ...category, userId: userId }),
+                );
+                logger.info(
+                    `Adding categories to user ${email}\n${prettyPrint(
+                        startingCategories,
+                    )}`,
+                );
+                startingCategories.forEach(
+                    async (category) => await insertCategory(category),
+                );
+
                 return {
                     status: 200,
                     data: { msg: "User inserted successfully" },
@@ -106,4 +126,4 @@ class UserService {
     }
 }
 
-export default UserService;
+export default new UserService();

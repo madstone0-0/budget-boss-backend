@@ -64,6 +64,17 @@ const doc = {
         BudgetOptions: {
             id: "uuid",
         },
+        Category: {
+            categoryid: "1",
+            userId: "uuid",
+            name: "Cash",
+            color: "#000000",
+        },
+        NewCategory: {
+            userId: "uuid",
+            name: "Cash",
+            color: "#000000",
+        },
         ErrorResponse: {
             msg: "Error message",
         },

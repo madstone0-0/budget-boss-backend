@@ -9,7 +9,7 @@ import {
 import { InferInsertModel, InferSelectModel, eq, sql } from "drizzle-orm";
 import db from "../../db";
 import { users } from "./users";
-import { catergories } from "./categories";
+import { categories } from "./categories";
 
 export const budget = pgTable("budget", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -21,7 +21,7 @@ export const budget = pgTable("budget", {
     amount: numeric("amount", { scale: 18, precision: 8 }).notNull(),
     categoryId: integer("category_id")
         .notNull()
-        .references(() => catergories.categoryId),
+        .references(() => categories.categoryId),
 });
 
 export type Budget = InferSelectModel<typeof budget>;

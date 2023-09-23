@@ -32,8 +32,7 @@ bud.get(
             res.status(400).send("Missing required fields");
         }
 
-        new BudgetService()
-            .GetAll(id)
+        BudgetService.GetAll(id)
             .then(({ status, data }) => {
                 res.status(status).send(data);
             })
@@ -66,8 +65,7 @@ bud.post("/add/:id", (req, res) => {
         categoryId,
     };
 
-    new BudgetService()
-        .Add(budget)
+    BudgetService.Add(budget)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
@@ -99,8 +97,7 @@ bud.put("/update/:id", (req, res) => {
         categoryId,
     };
 
-    new BudgetService()
-        .Update(budget, id)
+    BudgetService.Update(budget, id)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
@@ -118,8 +115,7 @@ bud.delete("/delete/:id", (req, res) => {
     */
     const { id } = req.params;
 
-    new BudgetService()
-        .Delete(id)
+    BudgetService.Delete(id)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
@@ -153,8 +149,7 @@ bud.post(
             budgetOptions: budgetOptions,
         };
 
-        new BudgetService()
-            .Create(id, userBudget)
+        BudgetService.Create(id, userBudget)
             .then(({ status, data }) => {
                 res.status(status).send(data);
             })
@@ -177,8 +172,7 @@ bud.get("/options/:id", (req, res) => {
         return res.status(400).send("Missing required fields");
     }
 
-    new BudgetService()
-        .GetOptions(id)
+    BudgetService.GetOptions(id)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
@@ -202,8 +196,7 @@ bud.put("/options/update/:id", (req, res) => {
         return res.status(400).send("Missing required fields");
     }
 
-    new BudgetService()
-        .UpdateOptions(id, budgetOptions)
+    BudgetService.UpdateOptions(id, budgetOptions)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
@@ -225,8 +218,7 @@ bud.delete("/options/delete/:id", (req, res) => {
         return res.status(400).send("Missing required fields");
     }
 
-    new BudgetService()
-        .DeleteOptions(id)
+    BudgetService.DeleteOptions(id)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })

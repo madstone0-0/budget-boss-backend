@@ -26,6 +26,7 @@ class BudgetService {
             logger.info(prettyPrint(result));
             return { status: 200, data: { msg: "Budget added successfully" } };
         } catch (err: any) {
+            logger.error(`Add budget: ${err}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -147,4 +148,4 @@ class BudgetService {
     }
 }
 
-export default BudgetService;
+export default new BudgetService();

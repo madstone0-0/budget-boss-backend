@@ -10,4 +10,5 @@ export interface UserInfo {
 export interface ServiceReturn {
     status: number;
     data: any;
+    extra?: any;
 }

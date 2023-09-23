@@ -61,7 +61,7 @@ app.use(
 
 // prettier-ignore
 app.use(
-    "/categories",
+    "/category",
     cat
     /*
     #swagger.tags = ['Category']
