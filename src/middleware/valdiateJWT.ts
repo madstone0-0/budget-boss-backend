@@ -1,11 +1,11 @@
 import { Handler } from "express";
-import { access } from "fs";
 import { verify } from "jsonwebtoken";
 import { logger } from "../logging";
+import { prettyPrint } from "..";
 
 const validateJWT: Handler = (req, res, next) => {
-    const { refreshToken, accessToken } = req.body;
-    if (!refreshToken || !accessToken) {
+    const token = req.headers["authorization"];
+    if (!token) {
         logger.error("No access token found in request");
         return res
             .status(417)
@@ -13,7 +13,7 @@ const validateJWT: Handler = (req, res, next) => {
     }
 
     try {
-        verify(accessToken, process.env.SECRET_KEY!);
+        verify(token.split(" ")[1], process.env.SECRET_KEY!);
         next();
     } catch (err: any) {
         logger.error(`Validate JWT: ${err}`);
