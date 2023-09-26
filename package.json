@@ -4,9 +4,9 @@
     "scripts": {
         "build": "tsc",
         "prestart": "yarn build",
-        "dev": "NODE_ENV=development; nodemon src/index.ts",
+        "dev": "NODE_ENV=development; nodemon -r dotenv/config src/index.ts",
         "dev:bun": "bun --hot src/index.ts",
-        "start": "NODE_ENV=production; pm2-runtime index.js",
+        "start": "yarn build && NODE_ENV=production; pm2-runtime ./dist/index.js",
         "test": "NODE_ENV=testing; jest --detectOpenHandles",
         "docs": "node ./src/swagger.ts; yarn dev",
         "dev:docs": "NODE_ENV=development; ts-node ./src/swagger.ts; yarn dev"

@@ -1,7 +1,7 @@
 import express from "express";
 import CategoryService from "../services/CategoryService";
 import { logger } from "../logging";
-import { NewCategory } from "../db/schema/categories";
+import { NewCategory } from "../db/schema/category";
 import { prettyPrint } from "..";
 import validateJWT from "../middleware/valdiateJWT";
 

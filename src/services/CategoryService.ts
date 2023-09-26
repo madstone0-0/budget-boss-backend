@@ -5,7 +5,7 @@ import {
     getUserCategories,
     insertCategory,
     updateCategory,
-} from "../db/schema/categories";
+} from "../db/schema/category";
 import { logger } from "../logging";
 import { ServiceReturn } from "../types";
 

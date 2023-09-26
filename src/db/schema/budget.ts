@@ -8,8 +8,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, eq, sql } from "drizzle-orm";
 import db from "../../db";
-import { users } from "./users";
-import { categories } from "./categories";
+import { users } from "./user";
+import { categories } from "./category";
 
 export const budget = pgTable("budget", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -30,13 +30,11 @@ export type NewBudget = InferInsertModel<typeof budget>;
 const budgetSelectByUser = db
     .select()
     .from(budget)
-    .where(eq(budget.userId, sql.placeholder("userId")))
-    .prepare("budget_select_by_id");
+    .where(eq(budget.userId, sql.placeholder("userId")));
 
 const budgetDeleteById = db
     .delete(budget)
-    .where(eq(budget.id, sql.placeholder("id")))
-    .prepare("budget_delete_by_id");
+    .where(eq(budget.id, sql.placeholder("id")));
 
 export const insertBudget = async (newBudget: NewBudget) =>
     db.insert(budget).values(newBudget).returning();

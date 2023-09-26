@@ -1,14 +1,14 @@
 import supertest from "supertest";
 import db from "../db";
 import { NewBudget, budget } from "../db/schema/budget";
-import { User, users } from "../db/schema/users";
+import { User, users } from "../db/schema/user";
 import UserService from "../services/UserService";
 import { UserInfo, ServiceReturn } from "../types";
 import crypto, { randomUUID } from "crypto";
 import { sign } from "jsonwebtoken";
 import app from "..";
 
-import { NewCategory, insertCategory } from "../db/schema/categories";
+import { NewCategory, insertCategory } from "../db/schema/category";
 
 let userWithToken: UserInfo;
 

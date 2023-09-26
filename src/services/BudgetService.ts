@@ -13,7 +13,7 @@ import {
     insertUserBudget,
     updateUserBudget,
 } from "../db/schema/user_budget";
-import { updateUser } from "../db/schema/users";
+import { updateUser } from "../db/schema/user";
 import { logger } from "../logging";
 import { ServiceReturn } from "../types";
 

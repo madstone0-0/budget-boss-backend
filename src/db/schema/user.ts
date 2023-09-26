@@ -2,7 +2,7 @@ import { pgTable, varchar, uuid, boolean } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, eq, sql } from "drizzle-orm";
 import db from "../../db";
 
-export const users = pgTable("users", {
+export const users = pgTable("user", {
     userId: uuid("user_id").primaryKey().defaultRandom(),
     email: varchar("email").notNull(),
     salt: varchar("salt").notNull(),
@@ -16,23 +16,21 @@ export type NewUser = InferInsertModel<typeof users>;
 const userSelectById = db
     .select()
     .from(users)
-    .where(eq(users.userId, sql.placeholder("id")))
-    .prepare("user_select_by_id");
+    .where(eq(users.userId, sql.placeholder("id")));
 
 const userSelectByEmail = db
     .select()
     .from(users)
     .where(eq(users.email, sql.placeholder("email")))
-    .limit(1)
-    .prepare("user_select_by_email");
+    .limit(1);
 
 const userDeleteById = db
     .delete(users)
-    .where(eq(users.userId, sql.placeholder("id")))
-    .prepare("user_delete_by_id");
+    .where(eq(users.userId, sql.placeholder("id")));
 
 export const getUser = async (email: string) =>
-    await userSelectByEmail.execute({ email: email });
+    // await db.select().from(users).where(eq(users.email, email)).limit(1);
+    await userSelectByEmail.execute({ email });
 
 export const getUserById = async (id: string) =>
     await userSelectById.execute({ id: id });

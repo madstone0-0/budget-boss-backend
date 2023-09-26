@@ -1,5 +1,5 @@
 import { compare, genSalt, hash } from "bcrypt";
-import { NewUser, getUser, insertUser, updateUser } from "../db/schema/users";
+import { NewUser, getUser, insertUser, updateUser } from "../db/schema/user";
 import { logger } from "../logging";
 import { UserInfo, ServiceReturn } from "../types";
 import { ROUNDS } from "../constants";
@@ -8,7 +8,7 @@ import {
     STARTING_CATEGORIES,
     categories,
     insertCategory,
-} from "../db/schema/categories";
+} from "../db/schema/category";
 
 class UserService {
     async Login(
@@ -48,7 +48,7 @@ class UserService {
                 return { status: 401, data: { msg: "Incorrect Password" } };
             }
         } catch (err: any) {
-            logger.info(`/auth/signup Error: ${err}`);
+            logger.info(`/auth/login Error: ${err}`);
             return { status: 500, data: { msg: err.message } };
         }
     }

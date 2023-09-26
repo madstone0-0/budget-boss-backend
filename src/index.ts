@@ -1,12 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import dotenv from "dotenv";
 import compression from "compression";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger_output.json";
+import dotenv from "dotenv";
 
-import { httpLogger } from "./logging";
+import { httpLogger, logger } from "./logging";
 import { HOST, PORT } from "./constants";
 import auth from "./routes/auth";
 import bud from "./routes/budget";

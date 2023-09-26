@@ -1,9 +1,9 @@
 import { pgTable, varchar, uuid, serial } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, eq, sql } from "drizzle-orm";
 import db from "../../db";
-import { users } from "./users";
+import { users } from "./user";
 
-export const categories = pgTable("categories", {
+export const categories = pgTable("category", {
     categoryId: serial("category_id").primaryKey(),
     userId: uuid("user_id").references(() => users.userId),
     name: varchar("name").notNull(),
@@ -22,19 +22,16 @@ export const STARTING_CATEGORIES: NewCategory[] = [
 const categorySelectById = db
     .select()
     .from(categories)
-    .where(eq(categories.categoryId, sql.placeholder("id")))
-    .prepare("category_select_by_id");
+    .where(eq(categories.categoryId, sql.placeholder("id")));
 
 const categorySelectByUser = db
     .select()
     .from(categories)
-    .where(eq(categories.userId, sql.placeholder("userId")))
-    .prepare("category_select_by_user");
+    .where(eq(categories.userId, sql.placeholder("userId")));
 
 const categoryDeleteById = db
     .delete(categories)
-    .where(eq(categories.categoryId, sql.placeholder("id")))
-    .prepare("category_delete_by_id");
+    .where(eq(categories.categoryId, sql.placeholder("id")));
 
 export const getCategoryById = async (id: number) =>
     await categorySelectById.execute({ id });

@@ -2,7 +2,7 @@ import supertest from "supertest";
 import db from "../db";
 import app from "..";
 import { UserInfo } from "../types";
-import { users } from "../db/schema/users";
+import { users } from "../db/schema/user";
 
 beforeAll(async () => {
     return await db.delete(users);
