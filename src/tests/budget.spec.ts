@@ -20,42 +20,40 @@ beforeAll(async () => {
         password: "#MTS#@#testing123",
     };
 
-    await new UserService().SignUp(user);
-    await new UserService()
-        .Login(user, (userId) => {
-            const SECRET_KEY = process.env.SECRET_KEY!;
-            const refreshId = userId + SECRET_KEY;
-            const salt = crypto.randomBytes(16).toString("base64");
-            const hash = crypto
-                .createHmac("sha512", salt)
-                .update(refreshId)
-                .digest("base64");
-            const token = sign(user, SECRET_KEY, {
-                expiresIn: "3h",
-            });
-            const b = Buffer.from(hash);
-            const refreshToken = b.toString("base64");
-            return { accessToken: token, refreshToken: refreshToken };
-        })
-        .then(async (res) => {
-            userWithToken = res.data.userDetails;
-            const testCategory: NewCategory = {
-                name: "Ballin",
-                userId: userWithToken.userId,
-                color: "#FFFFFF",
-            };
-
-            insertCategory(testCategory).then((res) => {
-                testBudget = {
-                    userId: userWithToken.userId!,
-                    name: "Ballin",
-                    amount: "4000",
-                    dateAdded: new Date().toString(),
-                    categoryId: res[0].categoryId,
-                    id: randomUUID(),
-                };
-            });
+    await UserService.SignUp(user);
+    await UserService.Login(user, (userId) => {
+        const SECRET_KEY = process.env.SECRET_KEY!;
+        const refreshId = userId + SECRET_KEY;
+        const salt = crypto.randomBytes(16).toString("base64");
+        const hash = crypto
+            .createHmac("sha512", salt)
+            .update(refreshId)
+            .digest("base64");
+        const token = sign(user, SECRET_KEY, {
+            expiresIn: "3h",
         });
+        const b = Buffer.from(hash);
+        const refreshToken = b.toString("base64");
+        return { accessToken: token, refreshToken: refreshToken };
+    }).then(async (res) => {
+        userWithToken = res.data.userDetails;
+        const testCategory: NewCategory = {
+            name: "Ballin",
+            userId: userWithToken.userId,
+            color: "#FFFFFF",
+        };
+
+        insertCategory(testCategory).then((res) => {
+            testBudget = {
+                userId: userWithToken.userId!,
+                name: "Ballin",
+                amount: "4000",
+                dateAdded: new Date().toString(),
+                categoryId: res[0].categoryId,
+                id: randomUUID(),
+            };
+        });
+    });
     // await db.delete(users);
     // return await db.delete(budget);
 });
