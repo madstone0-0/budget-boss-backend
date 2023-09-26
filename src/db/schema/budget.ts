@@ -38,12 +38,6 @@ const budgetDeleteById = db
     .where(eq(budget.id, sql.placeholder("id")))
     .prepare("budget_delete_by_id");
 
-const budgetUpdateById = db
-    .update(budget)
-    .set(sql.placeholder("newBudget"))
-    .where(eq(budget.id, sql.placeholder("id")))
-    .prepare("budget_update_by_id");
-
 export const insertBudget = async (newBudget: NewBudget) =>
     db.insert(budget).values(newBudget).returning();
 
@@ -54,4 +48,4 @@ export const deleteBudget = async (id: string) =>
     await budgetDeleteById.execute({ id });
 
 export const updateBudget = async (newBudget: NewBudget, id: string) =>
-    await budgetUpdateById.execute({ newBudget: newBudget, id: id });
+    await db.update(budget).set(newBudget).where(eq(budget.id, id)).returning();

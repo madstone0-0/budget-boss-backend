@@ -5,6 +5,7 @@ import { logger } from "../logging";
 import { NewBudget } from "../db/schema/budget";
 import { NewUserBudget } from "../db/schema/user_budget";
 import validateRequiredFields from "../middleware/validateRequiredFields";
+import { prettyPrint } from "..";
 // import validateRequiredFields from "../middleware/validateRequiredFields";
 
 const bud = express.Router();
@@ -83,19 +84,21 @@ bud.put("/update/:id", (req, res) => {
     #swagger.responses[200] = { description: 'Budget successfully updated' }
     */
     const { id } = req.params;
-    const { name, amount, dateAdded, categoryId } = req.body;
+    const { name, amount, dateAdded, categoryId, userId } = req.body;
 
     if (!name || !amount || !dateAdded || !categoryId || !id) {
         res.status(400).send("Missing required fields");
     }
 
     const budget: NewBudget = {
-        userId: id,
+        userId: userId,
         name,
         amount,
         dateAdded,
         categoryId,
     };
+
+    logger.info(prettyPrint(budget));
 
     BudgetService.Update(budget, id)
         .then(({ status, data }) => {
