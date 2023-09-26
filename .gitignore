@@ -10,4 +10,4 @@
 dist/*
 
 json
-./.env
+.env
