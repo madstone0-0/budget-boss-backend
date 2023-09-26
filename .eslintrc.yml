@@ -3,8 +3,6 @@ extends:
     - "eslint:recommended"
     - "plugin:@typescript-eslint/recommended"
     - "plugin:@typescript-eslint/recommended-type-checked"
-    - "plugin:react/recommended"
-    - "plugin:react/jsx-runtime"
     - "plugin:@typescript-eslint/recommended-requiring-type-checking"
 parser: "@typescript-eslint/parser"
 parserOptions:
@@ -19,8 +17,6 @@ parserOptions:
 
 plugins:
     - "@typescript-eslint"
-    - react
-    - react-hooks
 ignorePatterns:
     - "dist/*"
 rules:
