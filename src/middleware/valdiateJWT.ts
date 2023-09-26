@@ -17,7 +17,8 @@ const validateJWT: Handler = (req, res, next) => {
         next();
     } catch (err: any) {
         logger.error(`Validate JWT: ${err}`);
-        return res.status(401).send({ msg: err });
+        logger.error(`token: ${prettyPrint(token)}`);
+        return res.status(401).send({ msg: err.message });
     }
 };
 

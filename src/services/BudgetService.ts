@@ -46,7 +46,9 @@ class BudgetService {
 
     async Update(budget: NewBudget, budgetId: string): Promise<ServiceReturn> {
         try {
-            await updateBudget(budget, budgetId);
+            logger.info(prettyPrint(budget));
+            const res = await updateBudget(budget, budgetId);
+            logger.info(prettyPrint(res));
             return {
                 status: 200,
                 data: { msg: `Budget ${budgetId} updated successfully` },
