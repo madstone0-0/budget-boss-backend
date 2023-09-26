@@ -2,7 +2,7 @@
     "name": "boss-backend",
     "packageManager": "yarn@3.6.3",
     "scripts": {
-        "build": "tsc",
+        "build": "yarn tsc",
         "prestart": "yarn build",
         "dev": "NODE_ENV=development; nodemon -r dotenv/config src/index.ts",
         "dev:bun": "bun --hot src/index.ts",
