@@ -16,7 +16,11 @@ dotenv.config();
 const app = express();
 
 app.use(compression());
-app.use(cors({ credentials: true }));
+if (process.env.NODE_ENV !== "development") {
+    app.use(cors({ origin: "https://budget-boss.vercel.app" }));
+} else {
+    app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+}
 app.use(express.json());
 app.use(httpLogger);
 app.use(helmet());
