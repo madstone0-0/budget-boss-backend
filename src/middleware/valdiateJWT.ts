@@ -1,5 +1,5 @@
 import { Handler } from "express";
-import { verify } from "jsonwebtoken";
+import { JsonWebTokenError, verify } from "jsonwebtoken";
 import { logger } from "../logging";
 import { prettyPrint } from "..";
 
@@ -15,10 +15,12 @@ const validateJWT: Handler = (req, res, next) => {
     try {
         verify(token.split(" ")[1], process.env.SECRET_KEY!);
         next();
-    } catch (err: any) {
-        logger.error(`Validate JWT: ${err}`);
-        logger.error(`token: ${prettyPrint(token)}`);
-        return res.status(401).send({ msg: err.message });
+    } catch (err) {
+        if (err instanceof JsonWebTokenError) {
+            logger.error(`Validate JWT: ${err.message}`);
+            logger.error(`token: ${prettyPrint(token)}`);
+            return res.status(401).send({ msg: err.message });
+        }
     }
 };
 

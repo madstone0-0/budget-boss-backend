@@ -1,4 +1,4 @@
-import { Handler } from "express";
+import { Handler, Request } from "express";
 
 const validateRequiredFields: (options: {
     requiredFieldsParam?: string[];
@@ -15,11 +15,11 @@ const validateRequiredFields: (options: {
             }
         }
 
-        if (requiredFieldsBody!.length !== 0) {
-            if (requiredFieldsBody!.some((field) => !req.body[field])) {
-                return res.status(400).send("Missing required fields");
-            }
-        }
+        // if (requiredFieldsBody!.length !== 0) {
+        //     if (requiredFieldsBody!.some((field) => !req.body[field])) {
+        //         return res.status(400).send("Missing required fields");
+        //     }
+        // }
 
         next();
     };

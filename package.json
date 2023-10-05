@@ -7,7 +7,7 @@
         "prestart": "yarn build",
         "dev": "NODE_ENV=development; nodemon -r dotenv/config src/index.ts",
         "dev:bun": "bun --hot src/index.ts",
-        "start": "yarn build && NODE_ENV=production; pm2-runtime ./dist/index.js",
+        "start": "NODE_ENV=production; pm2-runtime ./dist/index.js",
         "test": "NODE_ENV=testing; jest --detectOpenHandles",
         "docs": "node ./src/swagger.ts; yarn dev",
         "dev:docs": "NODE_ENV=development; ts-node ./src/swagger.ts; yarn dev"

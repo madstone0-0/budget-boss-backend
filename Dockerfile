@@ -25,4 +25,4 @@ RUN npm install pm2 -g
 EXPOSE 80
 # CMD [ "npm", "start", "dev" ]
 # CMD ["node", "src/index.js"]
-CMD ["pm2-runtime", "index.js"]
+CMD ["yarn", "start"]

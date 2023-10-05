@@ -19,12 +19,10 @@ let pool = new Pool({
 });
 
 logger.info(
-    `Connecting to database with info:` +
+    "Connecting to database with info:" +
         `\nHOST: ${constants.PG_HOST}` +
         `\nPORT: ${constants.PG_PORT}` +
-        `\nUSER: ${constants.PG_USER}` +
-        `\nPASS: ${constants.PG_PASS}` +
-        `\nDB: ${constants.PG_DB}`,
+        `\nUSER: ${constants.PG_USER}`,
 );
 
 const db = drizzle(pool);

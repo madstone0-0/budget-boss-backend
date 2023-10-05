@@ -6,12 +6,12 @@ import validateUserInfo from "../middleware/validateUserInfo";
 import express, { NextFunction, Request, Response } from "express";
 import { prettyPrint } from "../";
 import UserService from "../services/UserService";
-import { UserInfo } from "../types";
+import { LoginRequest, UserInfo } from "../types";
 import handleValidation from "../middleware/handleValidation";
 
 const auth = express.Router();
 
-auth.get("/info", (req, res) => {
+auth.get("/info", (_req, res) => {
     //#summary = 'Auth info'
     /*
     #swagger.tags = ['Auth']
@@ -47,42 +47,49 @@ auth.post("/signup", (req: Request, res: Response, next: NextFunction) => {
         });
 });
 
-auth.post("/login", (req: Request, res: Response, next: NextFunction) => {
-    /*
+auth.post(
+    "/login",
+    (
+        req: Request<unknown, unknown, LoginRequest>,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        /*
     #swagger.summary = 'Login'
     #swagger.parameters['userInfo'] = { in: 'body', description: 'User info', required: true, schema: { $ref: "#/definitions/UserInfo" } }
     #swagger.responses[200] = { description: 'User successfully logged in',  schema: { $userDetails: { $ref: "#/definitions/UserInfo" } } }
     #swagger.responses[401] = { description: 'Incorrect Password'}
     */
-    const { email, password } = req.body;
-    const userInfo: UserInfo = {
-        email: email,
-        password: password,
-    };
-    logger.info(prettyPrint(userInfo));
-    UserService.Login(userInfo, (userId) => {
-        const SECRET_KEY = process.env.SECRET_KEY!;
-        const refreshId = userId + SECRET_KEY;
-        const salt = crypto.randomBytes(16).toString("base64");
-        const hash = crypto
-            .createHmac("sha512", salt)
-            .update(refreshId)
-            .digest("base64");
-        req.body.refreshKey = salt;
-        const token = sign(req.body, SECRET_KEY, {
-            expiresIn: "3h",
-        });
-        const b = Buffer.from(hash);
-        const refreshToken = b.toString("base64");
-        return { accessToken: token, refreshToken: refreshToken };
-    })
-        .then(({ status, data }) => {
-            res.status(status).send(data);
+        const { email, password } = req.body;
+        const userInfo: UserInfo = {
+            email: email,
+            password: password,
+        };
+        logger.info(prettyPrint(userInfo));
+        UserService.Login(userInfo, (userId) => {
+            const SECRET_KEY = process.env.SECRET_KEY!;
+            const refreshId = userId + SECRET_KEY;
+            const salt = crypto.randomBytes(16).toString("base64");
+            const hash = crypto
+                .createHmac("sha512", salt)
+                .update(refreshId)
+                .digest("base64");
+            req.body.refreshKey = salt;
+            const token = sign(req.body, SECRET_KEY, {
+                expiresIn: "3h",
+            });
+            const b = Buffer.from(hash);
+            const refreshToken = b.toString("base64");
+            return { accessToken: token, refreshToken: refreshToken };
         })
-        .catch((err) => {
-            logger.error(`Login: ${err}`);
-            res.status(500).send({ msg: "Server Error" });
-        });
-});
+            .then(({ status, data }) => {
+                res.status(status).send(data);
+            })
+            .catch((err) => {
+                logger.error(`Login: ${err}`);
+                res.status(500).send({ msg: "Server Error" });
+            });
+    },
+);
 
 export default auth;

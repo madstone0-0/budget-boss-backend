@@ -6,6 +6,8 @@ import { NewBudget } from "../db/schema/budget";
 import { NewUserBudget } from "../db/schema/user_budget";
 import validateRequiredFields from "../middleware/validateRequiredFields";
 import { prettyPrint } from "..";
+import { resolveError } from "../utils/catchError";
+import { CustomRequest } from "../types";
 // import validateRequiredFields from "../middleware/validateRequiredFields";
 
 const bud = express.Router();
@@ -37,8 +39,11 @@ bud.get(
             .then(({ status, data }) => {
                 res.status(status).send(data);
             })
-            .catch((err) => {
-                logger.error(`Get budget: ${err.stacktrace}`);
+            .catch((e) => {
+                const err = resolveError(e);
+                logger.error(
+                    `Get budget msg:${err.message} stack: ${err.stack}`,
+                );
                 res.status(500).send({ msg: "Server Error" });
             });
     },
@@ -70,8 +75,9 @@ bud.post("/add/:id", (req, res) => {
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Add budget: ${err.stacktrace}`);
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Add budget: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -104,8 +110,9 @@ bud.put("/update/:id", (req, res) => {
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Update budget: ${err.stacktrace}`);
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Update budget: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -122,8 +129,9 @@ bud.delete("/delete/:id", (req, res) => {
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Delete budget: ${err.stacktrace}`);
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Delete budget: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -156,8 +164,9 @@ bud.post(
             .then(({ status, data }) => {
                 res.status(status).send(data);
             })
-            .catch((err) => {
-                logger.error(`Create budget: ${err.stacktrace}`);
+            .catch((e) => {
+                const err = resolveError(e);
+                logger.error(`Create budget: ${err.stack}`);
                 res.status(500).send({ msg: "Server Error" });
             });
     },
@@ -179,35 +188,43 @@ bud.get("/options/:id", (req, res) => {
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Get budget options: ${err.stacktrace}`);
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Get budget options: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
 
-bud.put("/options/update/:id", (req, res) => {
-    /*
+bud.put(
+    "/options/update/:id",
+    (
+        req: CustomRequest<{ id: string }, { budgetOptions: NewUserBudget }>,
+        res,
+    ) => {
+        /*
     #swagger.summary = 'Update budget options'
     #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
     #swagger.parameters['budgetOptions'] = { in: 'body', description: 'Budget options', required: true, schema: { $ref: "#/definitions/BudgetOptions" } }
     #swagger.responses[200] = { description: 'Budget options successfully updated' }
     */
-    const { id } = req.params;
-    const { budgetOptions } = req.body;
+        const { id } = req.params;
+        const { budgetOptions } = req.body;
 
-    if (!id || !budgetOptions) {
-        return res.status(400).send("Missing required fields");
-    }
+        if (!id || !budgetOptions) {
+            return res.status(400).send("Missing required fields");
+        }
 
-    BudgetService.UpdateOptions(id, budgetOptions)
-        .then(({ status, data }) => {
-            res.status(status).send(data);
-        })
-        .catch((err) => {
-            logger.error(`Update budget options: ${err.stacktrace}`);
-            res.status(500).send({ msg: "Server Error" });
-        });
-});
+        BudgetService.UpdateOptions(id, budgetOptions)
+            .then(({ status, data }) => {
+                res.status(status).send(data);
+            })
+            .catch((e) => {
+                const err = resolveError(e);
+                logger.error(`Update budget options: ${err.stack}`);
+                res.status(500).send({ msg: "Server Error" });
+            });
+    },
+);
 
 bud.delete("/options/delete/:id", (req, res) => {
     /*
@@ -225,8 +242,9 @@ bud.delete("/options/delete/:id", (req, res) => {
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Delete budget options: ${err.stacktrace}`);
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Delete budget options: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });

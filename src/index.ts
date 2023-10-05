@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(httpLogger);
 app.use(helmet());
 
-export const prettyPrint = (log: string | Object | any) => {
+export const prettyPrint = <T>(log: T) => {
     return JSON.stringify(log, undefined, 4);
 };
 
