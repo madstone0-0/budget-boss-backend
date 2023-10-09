@@ -22,12 +22,14 @@ export const STARTING_CATEGORIES: NewCategory[] = [
 const categorySelectById = db
     .select()
     .from(categories)
-    .where(eq(categories.categoryId, sql.placeholder("id")));
+    .where(eq(categories.categoryId, sql.placeholder("id")))
+    .orderBy(categories.categoryId);
 
 const categorySelectByUser = db
     .select()
     .from(categories)
-    .where(eq(categories.userId, sql.placeholder("userId")));
+    .where(eq(categories.userId, sql.placeholder("userId")))
+    .orderBy(categories.categoryId);
 
 const categoryDeleteById = db
     .delete(categories)
@@ -49,5 +51,5 @@ export const updateCategory = async (newCategory: NewCategory, id: number) =>
     db
         .update(categories)
         .set(newCategory)
-        .where(eq(categories.categoryId, sql.placeholder("id")))
+        .where(eq(categories.categoryId, id))
         .returning();

@@ -93,7 +93,7 @@ bud.put("/update/:id", (req, res) => {
     const { name, amount, dateAdded, categoryId, userId } = req.body;
 
     if (!name || !dateAdded || !categoryId || !id) {
-        res.status(400).send("Missing required fields");
+        return res.status(400).send("Missing required fields");
     }
 
     const budget: NewBudget = {

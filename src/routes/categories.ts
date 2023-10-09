@@ -4,6 +4,7 @@ import { logger } from "../logging";
 import { NewCategory } from "../db/schema/category";
 import { prettyPrint } from "..";
 import validateJWT from "../middleware/valdiateJWT";
+import { resolveError } from "../utils/catchError";
 
 const cat = express.Router();
 
@@ -24,14 +25,15 @@ cat.get("/all/:id", (req, res) => {
     */
 
     const { id } = req.params;
-    if (!id) res.status(400).send("Missing required fields");
+    if (!id) return res.status(400).send("Missing required fields");
 
     CategoryService.GetAll(id)
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err: any) => {
-            logger.error(`Get category: ${err.stacktrace}`);
+        .catch((error) => {
+            const err = resolveError(error);
+            logger.error(`Get category: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -48,7 +50,7 @@ cat.post("/add/:id", (req, res) => {
     const { name, userId, color } = req.body;
 
     if (!name || !userId || !color || !id)
-        res.status(400).send("Missing required fields");
+        return res.status(400).send("Missing required fields");
 
     const category: NewCategory = {
         userId,
@@ -60,8 +62,9 @@ cat.post("/add/:id", (req, res) => {
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Add category: ${err.stacktrace}`);
+        .catch((error) => {
+            const err = resolveError(error);
+            logger.error(`Add category: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -74,10 +77,10 @@ cat.put("/update/:id", (req, res) => {
     #swagger.responses[200] = { description: 'Category successfully updated' }
     */
     const { id } = req.params;
-    const { name, userId, color, categoryId } = req.body;
+    const { name, userId, color } = req.body;
 
-    if (!name || !userId || !color || !categoryId || !id)
-        res.status(400).send("Missing required fields");
+    if (!name || !userId || !color || !id)
+        return res.status(400).send("Missing required fields");
 
     const category: NewCategory = {
         userId,
@@ -85,12 +88,13 @@ cat.put("/update/:id", (req, res) => {
         color,
     };
 
-    CategoryService.Update(category, categoryId)
+    CategoryService.Update(category, parseInt(id))
         .then(({ status, data }) => {
             res.status(status).send(data);
         })
-        .catch((err) => {
-            logger.error(`Update category: ${err.stacktrace}`);
+        .catch((error) => {
+            const err = resolveError(error);
+            logger.error(`Update category: ${err.stack}`);
             res.status(500).send({ msg: "Server Error" });
         });
 });
@@ -102,18 +106,20 @@ cat.delete("/delete/:id", (req, res) => {
     #swagger.responses[200] = { description: 'Category successfully deleted' }
     */
     const { id } = req.params;
-    if (!id) res.status(400).send("Missing required fields");
+    if (!id) return res.status(400).send("Missing required fields");
 
     try {
         CategoryService.Delete(Number(id))
             .then(({ status, data }) => {
                 res.status(status).send(data);
             })
-            .catch((err) => {
-                logger.error(`Delete category: ${err.stacktrace}`);
+            .catch((error) => {
+                const err = resolveError(error);
+                logger.error(`Delete category: ${err.stack}`);
                 res.status(500).send({ msg: "Server Error" });
             });
-    } catch (err: any) {
+    } catch (error) {
+        const err = resolveError(error);
         logger.error(`CategoryService.Delete: ${prettyPrint(err)}`);
         res.status(500).send({ msg: "Server Error" });
     }
