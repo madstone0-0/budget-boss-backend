@@ -32,7 +32,7 @@ bud.get(
         */
         const { id } = req.params;
         if (!id) {
-            res.status(400).send("Missing required fields");
+            return res.status(400).send("Missing required fields");
         }
 
         BudgetService.GetAll(id)
@@ -59,8 +59,8 @@ bud.post("/add/:id", (req, res) => {
     const { id } = req.params;
     const { name, amount, dateAdded, categoryId } = req.body;
 
-    if (!name || !amount || !dateAdded || !categoryId || !id) {
-        res.status(400).send("Missing required fields");
+    if (!name || !dateAdded || !categoryId || !id) {
+        return res.status(400).send("Missing required fields");
     }
 
     const budget: NewBudget = {
@@ -92,7 +92,7 @@ bud.put("/update/:id", (req, res) => {
     const { id } = req.params;
     const { name, amount, dateAdded, categoryId, userId } = req.body;
 
-    if (!name || !amount || !dateAdded || !categoryId || !id) {
+    if (!name || !dateAdded || !categoryId || !id) {
         res.status(400).send("Missing required fields");
     }
 

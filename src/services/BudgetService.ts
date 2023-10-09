@@ -16,6 +16,7 @@ import {
 import { updateUser } from "../db/schema/user";
 import { logger } from "../logging";
 import { ServiceReturn } from "../types";
+import { resolveError } from "../utils/catchError";
 
 class BudgetService {
     async Add(budget: NewBudget): Promise<ServiceReturn> {
@@ -25,8 +26,9 @@ class BudgetService {
             logger.info(`Budget for user: ${budget.userId} added successfully`);
             logger.info(prettyPrint(result));
             return { status: 200, data: { msg: "Budget added successfully" } };
-        } catch (err: any) {
-            logger.error(`Add budget: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Add budget: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -38,8 +40,9 @@ class BudgetService {
             logger.info(`Budgets for user: ${userId}`);
             logger.info(prettyPrint(budgets));
             return { status: 200, data: { budgets } };
-        } catch (err: any) {
-            logger.error(`Get budget: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Get budget: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -53,8 +56,9 @@ class BudgetService {
                 status: 200,
                 data: { msg: `Budget ${budgetId} updated successfully` },
             };
-        } catch (err: any) {
-            logger.error(`Update budget: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Update budget: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -67,8 +71,9 @@ class BudgetService {
                 status: 200,
                 data: { msg: `Budget ${budgetId} deleted successfully` },
             };
-        } catch (err: any) {
-            logger.error(`Delete budget: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Delete budget: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -79,7 +84,7 @@ class BudgetService {
     ): Promise<ServiceReturn> {
         try {
             // Create budget spec
-            const budget = await insertUserBudget(newUserBudget);
+            await insertUserBudget(newUserBudget);
 
             // Update user hasCreatedBudget
             const result = await updateUser(userId, { hasCreatedBudget: true });
@@ -89,8 +94,9 @@ class BudgetService {
                 status: 200,
                 data: { msg: "Budget created successfully" },
             };
-        } catch (err: any) {
-            logger.error(`Create budget: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Create budget: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -105,8 +111,9 @@ class BudgetService {
                 status: 200,
                 data: { msg: "Budget options retrieved successfully" },
             };
-        } catch (err: any) {
-            logger.error(`Get budget options: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Get budget options: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -126,15 +133,16 @@ class BudgetService {
                 status: 200,
                 data: { msg: "Budget options updated successfully" },
             };
-        } catch (err: any) {
-            logger.error(`Update budget options: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Update budget options: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
 
     async DeleteOptions(userId: string): Promise<ServiceReturn> {
         try {
-            deleteUserBudget(userId);
+            await deleteUserBudget(userId);
 
             logger.info(
                 `Budget options for user: ${userId} deleted successfully`,
@@ -143,8 +151,9 @@ class BudgetService {
                 status: 200,
                 data: { msg: "Budget options deleted successfully" },
             };
-        } catch (err: any) {
-            logger.error(`Delete budget options: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Delete budget options: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }

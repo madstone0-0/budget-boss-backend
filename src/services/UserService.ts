@@ -4,11 +4,8 @@ import { logger } from "../logging";
 import { UserInfo, ServiceReturn } from "../types";
 import { ROUNDS } from "../constants";
 import { prettyPrint } from "..";
-import {
-    STARTING_CATEGORIES,
-    categories,
-    insertCategory,
-} from "../db/schema/category";
+import { STARTING_CATEGORIES, insertCategory } from "../db/schema/category";
+import { resolveError } from "../utils/catchError";
 
 class UserService {
     async Login(
@@ -47,8 +44,9 @@ class UserService {
                 logger.info(`Incorrect password: ${email}`);
                 return { status: 401, data: { msg: "Incorrect Password" } };
             }
-        } catch (err: any) {
-            logger.info(`/auth/login Error: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.info(`/auth/login Error: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -90,6 +88,7 @@ class UserService {
                     )}`,
                 );
                 startingCategories.forEach(
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
                     async (category) => await insertCategory(category),
                 );
 
@@ -97,10 +96,12 @@ class UserService {
                     status: 200,
                     data: { msg: "User inserted successfully" },
                 };
-            } catch (err: any) {
+            } catch (error) {
+                const err = resolveError(error);
                 return { status: 500, data: { msg: err.message } };
             }
-        } catch (err: any) {
+        } catch (error) {
+            const err = resolveError(error);
             logger.info(`/auth/signup Error: ${err}`);
             return { status: 500, data: { msg: err.message } };
         }
@@ -119,8 +120,9 @@ class UserService {
                 status: 200,
                 data: { msg: "User updated successfully" },
             };
-        } catch (err: any) {
-            logger.info(`/auth/update Error: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.info(`/auth/update Error: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }

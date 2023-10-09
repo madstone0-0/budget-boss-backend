@@ -8,6 +8,7 @@ import {
 } from "../db/schema/category";
 import { logger } from "../logging";
 import { ServiceReturn } from "../types";
+import { resolveError } from "../utils/catchError";
 
 class Category {
     async Add(category: NewCategory): Promise<ServiceReturn> {
@@ -22,8 +23,9 @@ class Category {
                 status: 200,
                 data: { msg: "Category added successfully" },
             };
-        } catch (err: any) {
-            logger.error(`Add category: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Add category: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -35,8 +37,9 @@ class Category {
             logger.info(`Categories for user: ${id}`);
             logger.info(prettyPrint(categories));
             return { status: 200, data: { categories } };
-        } catch (err: any) {
-            logger.error(`Get category: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Get category: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -54,8 +57,9 @@ class Category {
                 status: 200,
                 data: { msg: `Category ${categoryId} updated successfully` },
             };
-        } catch (err: any) {
-            logger.error(`Update category: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Update category: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -68,10 +72,11 @@ class Category {
             logger.info(prettyPrint(res));
             return {
                 status: 200,
-                data: { msg: `Category deleted successfully` },
+                data: { msg: "Category deleted successfully" },
             };
-        } catch (err: any) {
-            logger.error(`Delete category: ${err}`);
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Delete category: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }

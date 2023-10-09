@@ -14,7 +14,7 @@ export type Category = InferSelectModel<typeof categories>;
 export type NewCategory = InferInsertModel<typeof categories>;
 
 export const STARTING_CATEGORIES: NewCategory[] = [
-    { name: "Shopping", color: "#2567F9" },
+    { name: "Shopping", color: "#E4D00A" },
     { name: "Health", color: "#2567F9" },
     { name: "Food", color: "#FF3C82" },
 ];

@@ -22,6 +22,34 @@ const logLevels = {
     trace: 5,
 };
 
+const transports =
+    process.env.NODE_ENV === "production"
+        ? [
+              new winston.transports.File({ filename: "./logs/combined.log" }),
+              new winston.transports.Console(),
+          ]
+        : [new winston.transports.Console()];
+
+const exceptionHandlers =
+    process.env.NODE_ENV === "production"
+        ? [
+              new winston.transports.File({
+                  filename: "./logs/exceptions.log",
+              }),
+              new winston.transports.Console(),
+          ]
+        : [new winston.transports.Console()];
+
+const rejectionHandlers =
+    process.env.NODE_ENV === "production"
+        ? [
+              new winston.transports.File({
+                  filename: "./logs/rejections.log",
+              }),
+              new winston.transports.Console(),
+          ]
+        : [new winston.transports.Console()];
+
 const logger = winston.createLogger({
     levels: logLevels,
     level: process.env.LOG_LEVEL || "info",
@@ -36,9 +64,9 @@ const logger = winston.createLogger({
         colorize(),
         printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
     ),
-    transports: [new winston.transports.Console()],
-    exceptionHandlers: [new winston.transports.Console()],
-    rejectionHandlers: [new winston.transports.Console()],
+    transports: transports,
+    exceptionHandlers: exceptionHandlers,
+    rejectionHandlers: rejectionHandlers,
 });
 
 const httpLogger = morgan("short", {

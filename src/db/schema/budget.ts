@@ -18,7 +18,9 @@ export const budget = pgTable("budget", {
         .references(() => users.userId),
     name: varchar("name").notNull(),
     dateAdded: date("date_added").notNull(),
-    amount: numeric("amount", { scale: 18, precision: 8 }).notNull(),
+    amount: numeric("amount", { scale: 18, precision: 8 })
+        .default("0")
+        .notNull(),
     categoryId: integer("category_id")
         .notNull()
         .references(() => categories.categoryId),
