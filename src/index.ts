@@ -17,7 +17,14 @@ const app = express();
 
 app.use(compression());
 if (process.env.NODE_ENV !== "development") {
-    app.use(cors({ origin: "https://budget-boss.vercel.app" }));
+    app.use(
+        cors({
+            origin: [
+                "https://budget-boss.vercel.app",
+                "https://invebb.vercel.app",
+            ],
+        }),
+    );
 } else {
     app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 }
