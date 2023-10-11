@@ -8,6 +8,7 @@ import { prettyPrint } from "../";
 import UserService from "../services/UserService";
 import { LoginRequest, UserInfo } from "../types";
 import handleValidation from "../middleware/handleValidation";
+import { resolveError } from "../utils/catchError";
 
 const auth = express.Router();
 
@@ -91,5 +92,29 @@ auth.post(
             });
     },
 );
+
+auth.put("/update", (req, res) => {
+    /*
+    #swagger.summary = 'Update user info'
+    #swagger.parameters['userInfo'] = { in: 'body', description: 'User info', required: true, schema: { $ref: "#/definitions/UserInfo" } }
+    #swagger.responses[200] = { description: 'User info successfully updated' }
+    #swagger.responses[401] = { description: 'Incorrect Password'}
+    */
+    const { user } = req.body;
+
+    if (!user) {
+        return res.status(400).send("Missing required fields");
+    }
+
+    UserService.Update(user as UserInfo)
+        .then(({ status, data }) => {
+            return res.status(status).send(data);
+        })
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Update user: ${err.stack}`);
+            res.status(500).send({ msg: "Server Error" });
+        });
+});
 
 export default auth;

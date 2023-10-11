@@ -102,7 +102,7 @@ class UserService {
             }
         } catch (error) {
             const err = resolveError(error);
-            logger.info(`/auth/signup Error: ${err}`);
+            logger.info(`/auth/signup Error: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
