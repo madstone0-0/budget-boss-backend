@@ -38,7 +38,7 @@ class UserService {
                     accessToken: accessToken,
                     refreshToken: refreshToken,
                 };
-                logger.info(prettyPrint(userDetails));
+                logger.debug(prettyPrint(userDetails));
                 return { status: 200, data: { userDetails } };
             } else {
                 logger.info(`Incorrect password: ${email}`);
@@ -46,7 +46,7 @@ class UserService {
             }
         } catch (error) {
             const err = resolveError(error);
-            logger.info(`/auth/login Error: ${err.stack}`);
+            logger.error(`/auth/login Error: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -76,7 +76,7 @@ class UserService {
                 const { userId } = result[0];
 
                 logger.info(`User: ${email} successfully registered`);
-                logger.info(prettyPrint(result));
+                logger.debug(prettyPrint(result));
 
                 logger.info(`Creating starting categories for user ${email}`);
                 const startingCategories = STARTING_CATEGORIES.map(
@@ -102,7 +102,7 @@ class UserService {
             }
         } catch (error) {
             const err = resolveError(error);
-            logger.info(`/auth/signup Error: ${err.stack}`);
+            logger.error(`/auth/signup Error: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
         }
     }
@@ -115,7 +115,7 @@ class UserService {
             });
 
             logger.info(`User: ${userId} successfully updated`);
-            logger.info(prettyPrint(result));
+            logger.debug(prettyPrint(result));
             return {
                 status: 200,
                 data: { msg: "User updated successfully" },

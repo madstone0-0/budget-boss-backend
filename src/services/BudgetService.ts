@@ -24,12 +24,15 @@ class BudgetService {
             const result = await insertBudget(budget);
 
             logger.info(`Budget for user: ${budget.userId} added successfully`);
-            logger.info(prettyPrint(result));
-            return { status: 200, data: { msg: "Budget added successfully" } };
+            logger.debug(prettyPrint(result));
+            return { status: 200, data: { msg: "Record added successfully" } };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Add budget: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: { msg: "Something went wrong while adding record" },
+            };
         }
     }
 
@@ -38,23 +41,26 @@ class BudgetService {
             const budgets = await getUserBudget(userId);
 
             logger.info(`Budgets for user: ${userId}`);
-            logger.info(prettyPrint(budgets));
+            logger.debug(prettyPrint(budgets));
             return { status: 200, data: { budgets } };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Get budget: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: { msg: "Something went wrong while getting records" },
+            };
         }
     }
 
     async Update(budget: NewBudget, budgetId: string): Promise<ServiceReturn> {
         try {
-            logger.info(prettyPrint(budget));
+            logger.debug(prettyPrint(budget));
             const res = await updateBudget(budget, budgetId);
-            logger.info(prettyPrint(res));
+            logger.debug(prettyPrint(res));
             return {
                 status: 200,
-                data: { msg: `Budget ${budgetId} updated successfully` },
+                data: { msg: "Record updated successfully" },
             };
         } catch (error) {
             const err = resolveError(error);
@@ -69,12 +75,15 @@ class BudgetService {
             logger.info(`Budget: ${budgetId} deleted successfully`);
             return {
                 status: 200,
-                data: { msg: `Budget ${budgetId} deleted successfully` },
+                data: { msg: "Record deleted successfully" },
             };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Delete budget: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: { msg: "Something went wrong while deleting record" },
+            };
         }
     }
 
@@ -89,15 +98,44 @@ class BudgetService {
             // Update user hasCreatedBudget
             const result = await updateUser(userId, { hasCreatedBudget: true });
             logger.info(`Budget for user: ${userId} successfully created`);
-            logger.info(prettyPrint(result));
+            logger.debug(prettyPrint(result));
             return {
                 status: 200,
-                data: { msg: "Budget created successfully" },
+                data: { msg: "Budget template created successfully" },
             };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Create budget: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: {
+                    msg: "Something went wrong while creating budget template",
+                },
+            };
+        }
+    }
+
+    async CreatedTemplate(userId: string): Promise<ServiceReturn> {
+        try {
+            const result = await updateUser(userId, {
+                hasCreatedBudget: true,
+            });
+
+            logger.info(`User: ${userId} budget state successfully updated`);
+            logger.debug(prettyPrint(result));
+            return {
+                status: 200,
+                data: { msg: "Updated budget template status" },
+            };
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`/auth/createdBudget Error: ${err.stack}`);
+            return {
+                status: 500,
+                data: {
+                    msg: "Something went wrong while updating user status",
+                },
+            };
         }
     }
 
@@ -106,15 +144,20 @@ class BudgetService {
             const result = await getUserBudget(userId);
 
             logger.info(`Budget options for user: ${userId}`);
-            logger.info(prettyPrint(result));
+            logger.debug(prettyPrint(result));
             return {
                 status: 200,
-                data: { msg: "Budget options retrieved successfully" },
+                data: { msg: "Budget template retrieved successfully" },
             };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Get budget options: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: {
+                    msg: "Something went wrong while retrieving budget template",
+                },
+            };
         }
     }
 
@@ -128,15 +171,20 @@ class BudgetService {
             logger.info(
                 `Budget options for user: ${userId} updated successfully`,
             );
-            logger.info(prettyPrint(result));
+            logger.debug(prettyPrint(result));
             return {
                 status: 200,
-                data: { msg: "Budget options updated successfully" },
+                data: { msg: "Budget template updated successfully" },
             };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Update budget options: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: {
+                    msg: "Something went wrong while updating budget template",
+                },
+            };
         }
     }
 
@@ -149,12 +197,17 @@ class BudgetService {
             );
             return {
                 status: 200,
-                data: { msg: "Budget options deleted successfully" },
+                data: { msg: "Budget template deleted successfully" },
             };
         } catch (error) {
             const err = resolveError(error);
             logger.error(`Delete budget options: ${err.stack}`);
-            return { status: 500, data: { msg: err.message } };
+            return {
+                status: 500,
+                data: {
+                    msg: "Something went wrong while deleting budget template",
+                },
+            };
         }
     }
 }

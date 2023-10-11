@@ -2,14 +2,14 @@
     "name": "boss-backend",
     "packageManager": "yarn@3.6.3",
     "scripts": {
-        "build:render": "./node_modules/.bin/tsc",
+        "build:render": "yarn docs ;./node_modules/.bin/tsc",
         "build": "tsc",
         "prestart": "yarn build",
-        "dev": "NODE_ENV=development; nodemon -r dotenv/config src/index.ts",
+        "dev": "NODE_ENV=development;LOG_LEVEL=debug; nodemon -r dotenv/config src/index.ts",
         "dev:bun": "bun --hot src/index.ts",
         "start": "LOG_LEVEL=debug;NODE_ENV=production; pm2-runtime ./dist/index.js",
         "test": "NODE_ENV=testing; jest --detectOpenHandles",
-        "docs": "node ./src/swagger.ts; yarn dev",
+        "docs": "node ./src/swagger.ts",
         "dev:docs": "NODE_ENV=development; ts-node ./src/swagger.ts; yarn dev"
     },
     "dependencies": {

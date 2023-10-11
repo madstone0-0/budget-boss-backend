@@ -12,7 +12,7 @@ cat.get("/info", (req, res) => {
     /*
     #swagger.summary = 'Category info'
     */
-    res.send("Categroy route");
+    return res.send("Categroy route");
 });
 
 cat.use(validateJWT);
@@ -29,12 +29,12 @@ cat.get("/all/:id", (req, res) => {
 
     CategoryService.GetAll(id)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((error) => {
             const err = resolveError(error);
             logger.error(`Get category: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -58,14 +58,16 @@ cat.post("/add/:id", (req, res) => {
         color,
     };
 
+    logger.debug(prettyPrint(category));
+
     CategoryService.Add(category)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((error) => {
             const err = resolveError(error);
             logger.error(`Add category: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -88,14 +90,16 @@ cat.put("/update/:id", (req, res) => {
         color,
     };
 
+    logger.debug(prettyPrint(category));
+
     CategoryService.Update(category, parseInt(id))
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((error) => {
             const err = resolveError(error);
             logger.error(`Update category: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -111,17 +115,17 @@ cat.delete("/delete/:id", (req, res) => {
     try {
         CategoryService.Delete(Number(id))
             .then(({ status, data }) => {
-                res.status(status).send(data);
+                return res.status(status).send(data);
             })
             .catch((error) => {
                 const err = resolveError(error);
                 logger.error(`Delete category: ${err.stack}`);
-                res.status(500).send({ msg: "Server Error" });
+                return res.status(500).send({ msg: "Server Error" });
             });
     } catch (error) {
         const err = resolveError(error);
         logger.error(`CategoryService.Delete: ${prettyPrint(err)}`);
-        res.status(500).send({ msg: "Server Error" });
+        return res.status(500).send({ msg: "Server Error" });
     }
 });
 

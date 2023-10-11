@@ -35,8 +35,18 @@ const categoryDeleteById = db
     .delete(categories)
     .where(eq(categories.categoryId, sql.placeholder("id")));
 
+const categorySelectByName = db
+    .select()
+    .from(categories)
+    .where(eq(categories.userId, sql.placeholder("userId")))
+    .where(eq(categories.name, sql.placeholder("name")))
+    .orderBy(categories.categoryId);
+
 export const getCategoryById = async (id: number) =>
     await categorySelectById.execute({ id });
+
+export const getCategoryByName = async (userId: string, name: string) =>
+    await categorySelectByName.execute({ userId, name });
 
 export const getUserCategories = async (userId: string) =>
     await categorySelectByUser.execute({ userId });

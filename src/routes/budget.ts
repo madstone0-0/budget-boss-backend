@@ -8,6 +8,7 @@ import validateRequiredFields from "../middleware/validateRequiredFields";
 import { prettyPrint } from "..";
 import { resolveError } from "../utils/catchError";
 import { CustomRequest } from "../types";
+import { debug } from "console";
 // import validateRequiredFields from "../middleware/validateRequiredFields";
 
 const bud = express.Router();
@@ -16,7 +17,7 @@ bud.get("/info", (req, res) => {
     /*
     #swagger.summary = 'Budget info'
     */
-    res.send("Budget route");
+    return res.send("Budget route");
 });
 
 bud.use(validateJWT);
@@ -37,14 +38,14 @@ bud.get(
 
         BudgetService.GetAll(id)
             .then(({ status, data }) => {
-                res.status(status).send(data);
+                return res.status(status).send(data);
             })
             .catch((e) => {
                 const err = resolveError(e);
                 logger.error(
                     `Get budget msg:${err.message} stack: ${err.stack}`,
                 );
-                res.status(500).send({ msg: "Server Error" });
+                return res.status(500).send({ msg: "Server Error" });
             });
     },
 );
@@ -71,14 +72,16 @@ bud.post("/add/:id", (req, res) => {
         categoryId,
     };
 
+    logger.debug(prettyPrint(budget));
+
     BudgetService.Add(budget)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((e) => {
             const err = resolveError(e);
             logger.error(`Add budget: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -104,16 +107,16 @@ bud.put("/update/:id", (req, res) => {
         categoryId,
     };
 
-    logger.info(prettyPrint(budget));
+    logger.debug(prettyPrint(budget));
 
     BudgetService.Update(budget, id)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((e) => {
             const err = resolveError(e);
             logger.error(`Update budget: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -127,12 +130,12 @@ bud.delete("/delete/:id", (req, res) => {
 
     BudgetService.Delete(id)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((e) => {
             const err = resolveError(e);
             logger.error(`Delete budget: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -160,17 +163,43 @@ bud.post(
             budgetOptions: budgetOptions,
         };
 
+        logger.debug(prettyPrint(userBudget));
+
         BudgetService.Create(id, userBudget)
             .then(({ status, data }) => {
-                res.status(status).send(data);
+                return res.status(status).send(data);
             })
             .catch((e) => {
                 const err = resolveError(e);
                 logger.error(`Create budget: ${err.stack}`);
-                res.status(500).send({ msg: "Server Error" });
+                return res.status(500).send({ msg: "Server Error" });
             });
     },
 );
+
+bud.put("/options/createdTemplate/:id", (req, res) => {
+    /*
+    #swagger.summary = 'Update user info'
+    #swagger.parameters['userInfo'] = { in: 'body', description: 'User info', required: true, schema: { $ref: "#/definitions/UserInfo" } }
+    #swagger.responses[200] = { description: 'User info successfully updated' }
+    #swagger.responses[401] = { description: 'Incorrect Password'}
+    */
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).send("Missing required fields");
+    }
+
+    BudgetService.CreatedTemplate(id)
+        .then(({ status, data }) => {
+            return res.status(status).send(data);
+        })
+        .catch((e) => {
+            const err = resolveError(e);
+            logger.error(`Update user: ${err.stack}`);
+            return res.status(500).send({ msg: "Server Error" });
+        });
+});
 
 bud.get("/options/:id", (req, res) => {
     /*
@@ -186,12 +215,12 @@ bud.get("/options/:id", (req, res) => {
 
     BudgetService.GetOptions(id)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((e) => {
             const err = resolveError(e);
             logger.error(`Get budget options: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
@@ -214,14 +243,16 @@ bud.put(
             return res.status(400).send("Missing required fields");
         }
 
+        logger.debug(prettyPrint(budgetOptions));
+
         BudgetService.UpdateOptions(id, budgetOptions)
             .then(({ status, data }) => {
-                res.status(status).send(data);
+                return res.status(status).send(data);
             })
             .catch((e) => {
                 const err = resolveError(e);
                 logger.error(`Update budget options: ${err.stack}`);
-                res.status(500).send({ msg: "Server Error" });
+                return res.status(500).send({ msg: "Server Error" });
             });
     },
 );
@@ -240,12 +271,12 @@ bud.delete("/options/delete/:id", (req, res) => {
 
     BudgetService.DeleteOptions(id)
         .then(({ status, data }) => {
-            res.status(status).send(data);
+            return res.status(status).send(data);
         })
         .catch((e) => {
             const err = resolveError(e);
             logger.error(`Delete budget options: ${err.stack}`);
-            res.status(500).send({ msg: "Server Error" });
+            return res.status(500).send({ msg: "Server Error" });
         });
 });
 
