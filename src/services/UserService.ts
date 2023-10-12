@@ -1,11 +1,20 @@
 import { compare, genSalt, hash } from "bcrypt";
-import { NewUser, getUser, insertUser, updateUser } from "../db/schema/user";
+import {
+    NewUser,
+    User,
+    deleteUser,
+    getUser,
+    getUserById,
+    insertUser,
+    updateUser,
+} from "../db/schema/user";
 import { logger } from "../logging";
 import { UserInfo, ServiceReturn } from "../types";
 import { ROUNDS } from "../constants";
 import { prettyPrint } from "..";
 import { STARTING_CATEGORIES, insertCategory } from "../db/schema/category";
 import { resolveError } from "../utils/catchError";
+import { resolve } from "path";
 
 class UserService {
     async Login(
@@ -104,6 +113,36 @@ class UserService {
             const err = resolveError(error);
             logger.error(`/auth/signup Error: ${err.stack}`);
             return { status: 500, data: { msg: err.message } };
+        }
+    }
+
+    async Delete(userId: string): Promise<ServiceReturn> {
+        try {
+            const user = await getUserById(userId);
+            if (user.length === 0) {
+                return {
+                    status: 400,
+                    data: {
+                        msg: "User not found. Cannot delete a user that doesn't exist",
+                    },
+                };
+            }
+
+            logger.info(`Deleting user with id ${userId}`);
+            const res = await deleteUser(userId);
+            logger.debug(prettyPrint(res));
+
+            return {
+                status: 200,
+                data: { msg: "User deleted successfully" },
+            };
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`/auth/delete Error: ${err.stack}`);
+            return {
+                status: 500,
+                data: { msg: "Something went wrong while deleting user" },
+            };
         }
     }
 

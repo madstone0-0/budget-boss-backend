@@ -1,15 +1,17 @@
 import express, { Request, Response, NextFunction } from "express";
-import validateJWT from "../middleware/valdiateJWT";
+import {
+    validateBudget,
+    validateBudgetOptions,
+    validateJWT,
+} from "../middleware/validators";
 import BudgetService from "../services/BudgetService";
 import { logger } from "../logging";
 import { NewBudget } from "../db/schema/budget";
 import { NewUserBudget } from "../db/schema/user_budget";
-import validateRequiredFields from "../middleware/validateRequiredFields";
 import { prettyPrint } from "..";
 import { resolveError } from "../utils/catchError";
 import { CustomRequest } from "../types";
-import { debug } from "console";
-// import validateRequiredFields from "../middleware/validateRequiredFields";
+import { handleValidation } from "../middleware/handlers";
 
 const bud = express.Router();
 
@@ -33,7 +35,7 @@ bud.get(
         */
         const { id } = req.params;
         if (!id) {
-            return res.status(400).send("Missing required fields");
+            return res.status(400).send({ msg: "Missing required fields" });
         }
 
         BudgetService.GetAll(id)
@@ -50,75 +52,81 @@ bud.get(
     },
 );
 
-bud.post("/add/:id", (req, res) => {
-    /*
+bud.post(
+    "/add/:id",
+    validateBudget(),
+    handleValidation,
+    (req: CustomRequest<{ id: string }, NewBudget>, res: Response) => {
+        /*
     #swagger.summary = 'Add budget'
     #swagger.parameters['id'] = { in: 'path', description: 'User id', required: true, type: 'string' }
     #swagger.parameters['budget'] = { in: 'body', description: 'Budget info', required: true, schema: { $ref: "#/definitions/NewBudget" } }
     #swagger.responses[200] = { description: 'Budget successfully added' }
     */
-    const { id } = req.params;
-    const { name, amount, dateAdded, categoryId } = req.body;
+        const { id } = req.params;
+        const { name, amount, dateAdded, categoryId } = req.body;
 
-    if (!name || !dateAdded || !categoryId || !id) {
-        return res.status(400).send("Missing required fields");
-    }
+        if (!id) {
+            return res.status(400).send({ msg: "Missing required fields" });
+        }
 
-    const budget: NewBudget = {
-        userId: id,
-        name,
-        amount,
-        dateAdded,
-        categoryId,
-    };
+        const budget: NewBudget = {
+            userId: id,
+            name,
+            amount,
+            dateAdded,
+            categoryId,
+        };
 
-    logger.debug(prettyPrint(budget));
+        logger.debug(prettyPrint(budget));
 
-    BudgetService.Add(budget)
-        .then(({ status, data }) => {
-            return res.status(status).send(data);
-        })
-        .catch((e) => {
-            const err = resolveError(e);
-            logger.error(`Add budget: ${err.stack}`);
-            return res.status(500).send({ msg: "Server Error" });
-        });
-});
+        BudgetService.Add(budget)
+            .then(({ status, data }) => {
+                return res.status(status).send(data);
+            })
+            .catch((e) => {
+                const err = resolveError(e);
+                logger.error(`Add budget: ${err.stack}`);
+                return res.status(500).send({ msg: "Server Error" });
+            });
+    },
+);
 
-bud.put("/update/:id", (req, res) => {
-    /*
+bud.put(
+    "/update/:id",
+    validateBudget(),
+    handleValidation,
+    (req: CustomRequest<{ id: string }, NewBudget>, res: Response) => {
+        /*
     #swagger.summary = 'Update budget'
     #swagger.parameters['id'] = { in: 'path', description: 'Budget id', required: true, type: 'string' }
     #swagger.parameters['budget'] = { in: 'body', description: 'Budget info', required: true, schema: { $ref: "#/definitions/Budget" } }
     #swagger.responses[200] = { description: 'Budget successfully updated' }
     */
-    const { id } = req.params;
-    const { name, amount, dateAdded, categoryId, userId } = req.body;
+        const { id } = req.params;
+        const { name, amount, dateAdded, categoryId, userId } = req.body;
 
-    if (!name || !dateAdded || !categoryId || !id) {
-        return res.status(400).send("Missing required fields");
-    }
+        const budget: NewBudget = {
+            userId: userId,
+            name,
+            amount,
+            dateAdded,
+            categoryId,
+        };
 
-    const budget: NewBudget = {
-        userId: userId,
-        name,
-        amount,
-        dateAdded,
-        categoryId,
-    };
+        logger.debug(prettyPrint(budget));
 
-    logger.debug(prettyPrint(budget));
-
-    BudgetService.Update(budget, id)
-        .then(({ status, data }) => {
-            return res.status(status).send(data);
-        })
-        .catch((e) => {
-            const err = resolveError(e);
-            logger.error(`Update budget: ${err.stack}`);
-            return res.status(500).send({ msg: "Server Error" });
-        });
-});
+        BudgetService.Update(budget, id)
+            .then(({ status, data }) => {
+                return res.status(status).send(data);
+            })
+            .catch((e) => {
+                const err = resolveError(e);
+                logger.error(`Update budget: ${err.stack}`);
+                return res.status(500).send({ msg: "Server Error" });
+            });
+    },
+);
 
 bud.delete("/delete/:id", (req, res) => {
     /*
@@ -149,13 +157,14 @@ bud.post(
     #swagger.responses[200] = { description: 'Budget options successfully created' }
     */
     "/options/create/:id",
-    // validateRequiredFields({ requiredFieldsBody: ["budgetOptions"] }),
-    (req: Request, res: Response, next: NextFunction) => {
+    validateBudgetOptions(),
+    handleValidation,
+    (req: CustomRequest<{ id: string }, NewUserBudget>, res: Response) => {
         const { id } = req.params;
         const { budgetOptions } = req.body;
 
-        if (!id || !budgetOptions) {
-            return res.status(400).send("Missing required fields");
+        if (!id) {
+            return res.status(400).send({ msg: "Missing required fields" });
         }
 
         const userBudget: NewUserBudget = {
@@ -187,7 +196,7 @@ bud.put("/options/createdTemplate/:id", (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-        return res.status(400).send("Missing required fields");
+        return res.status(400).send({ msg: "Missing required fields" });
     }
 
     BudgetService.CreatedTemplate(id)
@@ -210,7 +219,7 @@ bud.get("/options/:id", (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-        return res.status(400).send("Missing required fields");
+        return res.status(400).send({ msg: "Missing required fields" });
     }
 
     BudgetService.GetOptions(id)
@@ -226,9 +235,11 @@ bud.get("/options/:id", (req, res) => {
 
 bud.put(
     "/options/update/:id",
+    validateBudgetOptions(),
+    handleValidation,
     (
         req: CustomRequest<{ id: string }, { budgetOptions: NewUserBudget }>,
-        res,
+        res: Response,
     ) => {
         /*
     #swagger.summary = 'Update budget options'
@@ -239,8 +250,8 @@ bud.put(
         const { id } = req.params;
         const { budgetOptions } = req.body;
 
-        if (!id || !budgetOptions) {
-            return res.status(400).send("Missing required fields");
+        if (!id) {
+            return res.status(400).send({ msg: "Missing required fields" });
         }
 
         logger.debug(prettyPrint(budgetOptions));
@@ -266,7 +277,7 @@ bud.delete("/options/delete/:id", (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-        return res.status(400).send("Missing required fields");
+        return res.status(400).send({ msg: "Missing required fields" });
     }
 
     BudgetService.DeleteOptions(id)
