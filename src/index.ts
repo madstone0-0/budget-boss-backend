@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== "development") {
         cors({
             origin: [
                 "https://budget-boss.vercel.app",
-                "https://invebb.vercel.app",
+                "https://www.invebb.com",
             ],
         }),
     );
