@@ -55,6 +55,9 @@ const doc = {
             dateadded: "2021-01-01",
             categoryid: "uuid",
         },
+        BudgetTotal: {
+            total: "1000",
+        },
         NewBudget: {
             name: "budget 1",
             amount: "1000",

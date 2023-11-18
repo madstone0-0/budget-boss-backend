@@ -2,6 +2,7 @@ import { prettyPrint } from "..";
 import {
     NewBudget,
     deleteBudget,
+    getBudgetTotalByCategory,
     getUserBudget,
     insertBudget,
     updateBudget,
@@ -9,14 +10,16 @@ import {
 import {
     NewUserBudget,
     UserBudget,
-    deleteUserBudget,
-    insertUserBudget,
-    updateUserBudget,
+    deleteUserBudgetOption,
+    insertUserBudgetOption,
+    getUserBudgetOptions,
+    updateUserBudgetOption,
 } from "../db/schema/user_budget";
 import { updateUser } from "../db/schema/user";
 import { logger } from "../logging";
-import { ServiceReturn } from "../types";
+import { BudgetOptions, ServiceReturn } from "../types";
 import { resolveError } from "../utils/catchError";
+import { NewCategory, insertCategory } from "../db/schema/category";
 
 class BudgetService {
     async Add(budget: NewBudget): Promise<ServiceReturn> {
@@ -87,18 +90,43 @@ class BudgetService {
         }
     }
 
+    async GetTotal(userId: string, categoryId: string): Promise<ServiceReturn> {
+        try {
+            const total = await getBudgetTotalByCategory(userId, categoryId);
+            logger.info(
+                `Total amount for category with id ${categoryId} for user with id ${userId}: ${total}`,
+            );
+            return {
+                status: 200,
+                data: {
+                    total,
+                },
+            };
+        } catch (error) {
+            const err = resolveError(error);
+            logger.error(`Get budget total: ${err.stack}`);
+            return {
+                status: 500,
+                data: {
+                    msg: "Something went wrong while retrieving budget total",
+                },
+            };
+        }
+    }
+
     async Create(
         userId: string,
         newUserBudget: NewUserBudget,
     ): Promise<ServiceReturn> {
         try {
             // Create budget spec
-            await insertUserBudget(newUserBudget);
+            await insertUserBudgetOption(newUserBudget);
 
             // Update user hasCreatedBudget
-            const result = await updateUser(userId, { hasCreatedBudget: true });
             logger.info(`Budget for user: ${userId} successfully created`);
-            logger.debug(prettyPrint(result));
+            await this.CreatedTemplate(userId);
+
+            // await this.AddCreatedBudgets(userId);
             return {
                 status: 200,
                 data: { msg: "Budget template created successfully" },
@@ -115,7 +143,7 @@ class BudgetService {
         }
     }
 
-    async CreatedTemplate(userId: string): Promise<ServiceReturn> {
+    async CreatedTemplate(userId: string): Promise<void> {
         try {
             const result = await updateUser(userId, {
                 hasCreatedBudget: true,
@@ -123,31 +151,63 @@ class BudgetService {
 
             logger.info(`User: ${userId} budget state successfully updated`);
             logger.debug(prettyPrint(result));
-            return {
-                status: 200,
-                data: { msg: "Updated budget template status" },
-            };
+
+            await this.AddCreatedBudgets(userId);
         } catch (error) {
             const err = resolveError(error);
-            logger.error(`/auth/createdBudget Error: ${err.stack}`);
-            return {
-                status: 500,
-                data: {
-                    msg: "Something went wrong while updating user status",
-                },
-            };
+            throw err;
+        }
+    }
+
+    async AddCreatedBudgets(userId: string): Promise<void> {
+        try {
+            const userBudget = await getUserBudgetOptions(userId);
+            let { budgetOptions } = userBudget[0];
+            let actualBudgetOptions: BudgetOptions = JSON.parse(
+                JSON.stringify(budgetOptions),
+            );
+
+            actualBudgetOptions.options = actualBudgetOptions.options.filter(
+                (v, i, a) =>
+                    i ===
+                    a.findIndex((t) => t.category.name === v.category.name),
+            );
+
+            logger.info(`Adding created categories to user ${userId}`);
+
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            for (const option of actualBudgetOptions.options) {
+                const { category, weight } = option;
+                const newCategory: NewCategory = {
+                    userId: userId,
+                    name: category.name,
+                    weight: weight.toString(),
+                    color: category.color,
+                };
+                logger.debug(prettyPrint(newCategory));
+                logger.info(
+                    `Adding category ${category.name} to user ${userId}`,
+                );
+
+                await insertCategory(newCategory);
+            }
+
+            logger.info(`Created categories added to user ${userId}`);
+        } catch (error) {
+            const err = resolveError(error);
+            throw err;
         }
     }
 
     async GetOptions(userId: string): Promise<ServiceReturn> {
         try {
-            const result = await getUserBudget(userId);
+            const result = await getUserBudgetOptions(userId);
 
             logger.info(`Budget options for user: ${userId}`);
             logger.debug(prettyPrint(result));
             return {
                 status: 200,
-                data: { msg: "Budget template retrieved successfully" },
+                data: { budgetOptions: result[0] },
             };
         } catch (error) {
             const err = resolveError(error);
@@ -165,8 +225,11 @@ class BudgetService {
         userId: string,
         newUserBudget: Partial<UserBudget>,
     ): Promise<ServiceReturn> {
+        logger.debug(`userId: ${userId}`);
+        logger.debug("newUserBudget: " + prettyPrint(newUserBudget));
+
         try {
-            const result = await updateUserBudget(userId, newUserBudget);
+            const result = await updateUserBudgetOption(userId, newUserBudget);
 
             logger.info(
                 `Budget options for user: ${userId} updated successfully`,
@@ -190,7 +253,7 @@ class BudgetService {
 
     async DeleteOptions(userId: string): Promise<ServiceReturn> {
         try {
-            await deleteUserBudget(userId);
+            await deleteUserBudgetOption(userId);
 
             logger.info(
                 `Budget options for user: ${userId} deleted successfully`,

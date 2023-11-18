@@ -1,13 +1,18 @@
-import { pgTable, varchar, uuid, serial } from "drizzle-orm/pg-core";
-import { InferInsertModel, InferSelectModel, eq, sql } from "drizzle-orm";
+import { pgTable, varchar, uuid, serial, numeric } from "drizzle-orm/pg-core";
+import { InferInsertModel, InferSelectModel, eq, sql, and } from "drizzle-orm";
 import db from "../../db";
 import { users } from "./user";
+import { logger } from "../../logging";
+import { prettyPrint } from "../..";
 
 export const categories = pgTable("category", {
     categoryId: serial("category_id").primaryKey(),
     userId: uuid("user_id").references(() => users.userId),
     name: varchar("name").notNull(),
     color: varchar("color").notNull(),
+    weight: numeric("weight", { scale: 5, precision: 2 })
+        .notNull()
+        .default("0"),
 });
 
 export type Category = InferSelectModel<typeof categories>;
@@ -38,12 +43,22 @@ const categoryDeleteById = db
 const categorySelectByName = db
     .select()
     .from(categories)
-    .where(eq(categories.userId, sql.placeholder("userId")))
-    .where(eq(categories.name, sql.placeholder("name")))
+    .where(
+        and(
+            eq(categories.userId, sql.placeholder("userId")),
+            eq(categories.name, sql.placeholder("name")),
+        ),
+    )
     .orderBy(categories.categoryId);
 
-export const getCategoryById = async (id: number) =>
-    await categorySelectById.execute({ id });
+const categoryTotalWeight = db
+    .select({ total: sql<number>`sum(weight)` })
+    .from(categories)
+    .where(eq(categories.userId, sql.placeholder("userId")));
+
+export const getCategoryById = async (id: number) => {
+    return await categorySelectById.execute({ id });
+};
 
 export const getCategoryByName = async (userId: string, name: string) =>
     await categorySelectByName.execute({ userId, name });
@@ -63,3 +78,8 @@ export const updateCategory = async (newCategory: NewCategory, id: number) =>
         .set(newCategory)
         .where(eq(categories.categoryId, id))
         .returning();
+
+export const getTotalUserWeight = async (userId: string) => {
+    const total = await categoryTotalWeight.execute({ userId });
+    return total[0].total;
+};

@@ -1,4 +1,5 @@
 import type { Request } from "express";
+import { NewCategory } from "./db/schema/category";
 
 export interface UserInfo {
     userId?: string;
@@ -25,4 +26,13 @@ export interface LoginRequest {
     refreshKey?: string;
     email: string;
     password: string;
+}
+
+export interface BudgetOptions {
+    income: number;
+    options: { weight: number; category: NewCategory }[];
+}
+
+export interface Options {
+    options: { defaultCurrency: string };
 }

@@ -2,7 +2,9 @@ import { prettyPrint } from "..";
 import {
     NewCategory,
     deleteCategory,
+    getCategoryById,
     getCategoryByName,
+    getTotalUserWeight,
     getUserCategories,
     insertCategory,
     updateCategory,
@@ -24,6 +26,16 @@ class Category {
                     status: 400,
                     data: { msg: "Category already exists" },
                 };
+
+            const totalWeight = await getTotalUserWeight(category.userId!);
+            logger.debug(prettyPrint(totalWeight));
+
+            if (totalWeight + parseInt(category.weight!) > 100) {
+                return {
+                    status: 400,
+                    data: { msg: "Total weight cannot be greater than 100" },
+                };
+            }
 
             const res = await insertCategory(category);
 
@@ -67,6 +79,28 @@ class Category {
         categoryId: number,
     ): Promise<ServiceReturn> {
         try {
+            const totalWeight = await getTotalUserWeight(category.userId!);
+            logger.debug(prettyPrint(totalWeight));
+            const oldCategory = await getCategoryById(categoryId);
+            logger.debug(prettyPrint(categoryId));
+            logger.debug(prettyPrint(oldCategory));
+
+            const oldWeight =
+                oldCategory.length != 0 ? parseInt(oldCategory[0].weight) : 0;
+            logger.debug(prettyPrint({ oldWeight }));
+
+            if (totalWeight - oldWeight + parseInt(category.weight!) > 100) {
+                logger.debug(
+                    prettyPrint(
+                        totalWeight - oldWeight + parseInt(category.weight!),
+                    ),
+                );
+                return {
+                    status: 400,
+                    data: { msg: "Total weight cannot be greater than 100" },
+                };
+            }
+
             const res = await updateCategory(category, categoryId);
 
             logger.info(`Category: ${categoryId} updated successfully`);

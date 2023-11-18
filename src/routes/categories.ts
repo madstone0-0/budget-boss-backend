@@ -53,7 +53,7 @@ cat.post(
     */
 
         const { id } = req.params;
-        const { name, userId, color } = req.body;
+        const { name, userId, color, weight } = req.body;
 
         if (!id)
             return res.status(400).send({ msg: "Missing required fields" });
@@ -62,6 +62,7 @@ cat.post(
             userId,
             name,
             color,
+            weight,
         };
 
         logger.debug(prettyPrint(category));
@@ -90,7 +91,7 @@ cat.put(
     #swagger.responses[200] = { description: 'Category successfully updated' }
     */
         const { id } = req.params;
-        const { name, userId, color } = req.body;
+        const { name, userId, color, weight } = req.body;
 
         if (!id)
             return res.status(400).send({ msg: "Missing required fields" });
@@ -99,6 +100,7 @@ cat.put(
             userId,
             name,
             color,
+            weight,
         };
 
         logger.debug(prettyPrint(category));

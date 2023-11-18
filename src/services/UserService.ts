@@ -87,19 +87,19 @@ class UserService {
                 logger.info(`User: ${email} successfully registered`);
                 logger.debug(prettyPrint(result));
 
-                logger.info(`Creating starting categories for user ${email}`);
-                const startingCategories = STARTING_CATEGORIES.map(
-                    (category) => ({ ...category, userId: userId }),
-                );
-                logger.info(
-                    `Adding categories to user ${email}\n${prettyPrint(
-                        startingCategories,
-                    )}`,
-                );
-                startingCategories.forEach(
-                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                    async (category) => await insertCategory(category),
-                );
+                // logger.info(`Creating starting categories for user ${email}`);
+                // const startingCategories = STARTING_CATEGORIES.map(
+                //     (category) => ({ ...category, userId: userId }),
+                // );
+                // logger.info(
+                //     `Adding categories to user ${email}\n${prettyPrint(
+                //         startingCategories,
+                //     )}`,
+                // );
+                // startingCategories.forEach(
+                //     // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                //     async (category) => await insertCategory(category),
+                // );
 
                 return {
                     status: 200,

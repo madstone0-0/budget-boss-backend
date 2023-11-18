@@ -54,6 +54,54 @@
         }
       }
     },
+    "/auth/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "417": {
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/signup": {
       "post": {
         "tags": [
@@ -80,7 +128,19 @@
             "description": "Email is already registered"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -157,6 +217,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Incorrect Password"
@@ -330,25 +393,28 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -361,9 +427,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -400,25 +463,28 @@
             "description": "Budget successfully added"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -431,9 +497,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "requestBody": {
@@ -493,25 +556,28 @@
             "description": "Budget successfully updated"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -524,9 +590,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "requestBody": {
@@ -595,22 +658,74 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/budget/total/{id}/{categoryId}": {
+      "get": {
+        "tags": [
+          "Budget"
+        ],
+        "summary": "Get budget total",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User id"
+          },
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Category id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget total successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetTotal"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetTotal"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields",
             "content": {
               "application/json": {
                 "schema": {
@@ -624,8 +739,26 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "417": {
+            "description": "Expectation Failed"
+          },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -662,25 +795,28 @@
             "description": "Budget options successfully created"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -693,9 +829,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "requestBody": {
@@ -710,75 +843,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/budget/options/createdTemplate/{id}": {
-      "put": {
-        "tags": [
-          "Budget"
-        ],
-        "summary": "Update user info",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "userInfo",
-            "in": "body",
-            "description": "User info",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserInfo"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User info successfully updated"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Incorrect Password",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "417": {
-            "description": "No access token found in request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -818,25 +882,28 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -849,9 +916,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -903,34 +967,10 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Expectation Failed"
           },
           "500": {
             "description": "Server Error",
@@ -955,6 +995,9 @@
                 "type": "object",
                 "properties": {
                   "budgetOptions": {
+                    "example": "any"
+                  },
+                  "userId": {
                     "example": "any"
                   }
                 }
@@ -987,25 +1030,28 @@
             "description": "Budget options successfully deleted"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1018,9 +1064,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -1156,25 +1199,28 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1187,9 +1233,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -1226,25 +1269,28 @@
             "description": "Category successfully added"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1257,9 +1303,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "requestBody": {
@@ -1275,6 +1318,9 @@
                     "example": "any"
                   },
                   "color": {
+                    "example": "any"
+                  },
+                  "weight": {
                     "example": "any"
                   }
                 }
@@ -1316,25 +1362,28 @@
             "description": "Category successfully updated"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1347,9 +1396,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "requestBody": {
@@ -1365,6 +1411,9 @@
                     "example": "any"
                   },
                   "color": {
+                    "example": "any"
+                  },
+                  "weight": {
                     "example": "any"
                   }
                 }
@@ -1397,25 +1446,28 @@
             "description": "Category successfully deleted"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "417": {
-            "description": "No access token found in request",
+            "description": "Expectation Failed"
+          },
+          "500": {
+            "description": "Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1428,9 +1480,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -1480,6 +1529,18 @@
         },
         "xml": {
           "name": "Budget"
+        }
+      },
+      "BudgetTotal": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "string",
+            "example": "1000"
+          }
+        },
+        "xml": {
+          "name": "BudgetTotal"
         }
       },
       "NewBudget": {
